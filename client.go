@@ -3,12 +3,18 @@ package sqlettus
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
 	_ "embed"
 
 	_ "github.com/mattn/go-sqlite3"
+)
+
+var (
+	ErrKeyAlreadyExists = errors.New("key already exists")
+	ErrKeyDoesNotExist  = errors.New("key does not exist")
 )
 
 //go:embed schema.sql
@@ -138,20 +144,23 @@ func (c *Client) Delete(name string) (bool, error) {
 }
 
 func (c *Client) Rename(old string, new string) error {
-	args := []any{
-		sql.Named("new", new),
-		sql.Named("old", old),
-	}
+	err := c.db.WithTX(c.context, func(tx Executer) error {
+		_, _ = tx.ExecContext(c.context, `DELETE FROM keys WHERE name = :new`, sql.Named("new", new))
+		result, err := tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", new), sql.Named("old", old))
+		if err != nil {
+			return fmt.Errorf("could not rename key: %w", err)
+		}
 
-	_, err := c.db.ExecContext(
-		c.context, `
-	WITH updates AS (
-		DELETE FROM keys WHERE name = :new RETURNING id
-	)
-	UPDATE keys SET name = :new WHERE name = :old;
-	`, args...)
+		count, _ := result.RowsAffected()
+		if count == 0 {
+			return ErrKeyDoesNotExist
+		}
+
+		return nil
+	})
+
 	if err != nil {
-		return fmt.Errorf("could not rename: %q", err)
+		return fmt.Errorf("could not rename: %w", err)
 	}
 
 	return nil

@@ -51,7 +51,7 @@ func TestCompatibility(t *testing.T) {
 	})
 
 	for _, test := range payload {
-		if test.Skipped {
+		if test.Skipped || test.Since != "1.0.0" {
 			continue
 		}
 

@@ -1,6 +1,7 @@
 package sqlettus
 
 import (
+	"errors"
 	"log/slog"
 	"strings"
 
@@ -27,10 +28,17 @@ func handleCommand(
 		conn.Close()
 	case "rename":
 		err := client.Rename(string(args[1]), string(args[2]))
+		if errors.Is(err, ErrKeyDoesNotExist) {
+			conn.WriteError("key does not exist")
+			return
+		}
+
 		if err != nil {
 			slog.Error("rename", slog.String("error", err.Error()))
 			conn.WriteError("could not rename")
+			return
 		}
+		
 		conn.WriteString("OK")
 	case "del", "unlink":
 		count := 0
