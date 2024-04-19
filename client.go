@@ -7,6 +7,7 @@ import (
 	"time"
 
 	_ "embed"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -18,6 +19,8 @@ type Executer interface {
 	QueryRowContext(context.Context, string, ...any) *sql.Row
 	ExecContext(context.Context, string, ...any) (sql.Result, error)
 	PrepareContext(context.Context, string) (*sql.Stmt, error)
+	WithTX(context.Context, func(Executer) error) error
+	Close() error
 }
 
 type Client struct {
@@ -40,7 +43,7 @@ func NewClient(ctx context.Context, filename string) (*Client, error) {
 
 	return &Client{
 		db: &preparedExecuter{
-			executer: db,
+			db:       db,
 			prepared: map[string]*sql.Stmt{},
 		},
 		context: ctx,
@@ -168,11 +171,9 @@ func (c *Client) FlushDB() error {
 }
 
 func (c *Client) Close() error {
-	if db, ok := c.db.(*sql.DB); ok {
-		err := db.Close()
-		if err != nil {
-			return fmt.Errorf("could not close db: %w", err)
-		}
+	err := c.db.Close()
+	if err != nil {
+		return fmt.Errorf("could not close db: %w", err)
 	}
 
 	return nil

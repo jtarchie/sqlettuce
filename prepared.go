@@ -7,19 +7,37 @@ import (
 )
 
 type preparedExecuter struct {
-	executer Executer
+	db       *sql.DB
 	prepared map[string]*sql.Stmt
 }
 
-// PrepareContext implements Executer.
+func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error) error {
+	tx, err := p.db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("could not begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	err = fun(&txExecuter{tx})
+	if err != nil {
+		return fmt.Errorf("could execute within transaction: %w", err)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("could not commit transaction: %w", err)
+	}
+
+	return nil
+}
+
 func (p *preparedExecuter) PrepareContext(context.Context, string) (*sql.Stmt, error) {
 	return nil, fmt.Errorf("PreparedContext unsupported")
 }
 
-// ExecContext implements Executer.
 func (p *preparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	if _, ok := p.prepared[query]; !ok {
-		statement, err := p.executer.PrepareContext(ctx, query)
+		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return nil, fmt.Errorf("could not prepare statement: %w", err)
 		}
@@ -30,10 +48,9 @@ func (p *preparedExecuter) ExecContext(ctx context.Context, query string, args .
 	return p.prepared[query].ExecContext(ctx, args...)
 }
 
-// QueryContext implements Executer.
 func (p *preparedExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	if _, ok := p.prepared[query]; !ok {
-		statement, err := p.executer.PrepareContext(ctx, query)
+		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return nil, fmt.Errorf("could not prepare statement: %w", err)
 		}
@@ -44,10 +61,9 @@ func (p *preparedExecuter) QueryContext(ctx context.Context, query string, args 
 	return p.prepared[query].QueryContext(ctx, args...)
 }
 
-// QueryRowContext implements Executer.
 func (p *preparedExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	if _, ok := p.prepared[query]; !ok {
-		statement, err := p.executer.PrepareContext(ctx, query)
+		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return nil
 		}
@@ -56,6 +72,10 @@ func (p *preparedExecuter) QueryRowContext(ctx context.Context, query string, ar
 	}
 
 	return p.prepared[query].QueryRowContext(ctx, args...)
+}
+
+func (p *preparedExecuter) Close() error {
+	return p.db.Close()
 }
 
 var _ Executer = &preparedExecuter{}
