@@ -35,7 +35,7 @@ func (c *cli) Run() error {
 
 	<-ctx.Done()
 
-	if err := server.Stop(); err != nil {
+	if err := server.Close(); err != nil {
 		return fmt.Errorf("server stop errored: %w", err)
 	}
 

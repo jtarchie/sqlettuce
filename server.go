@@ -3,7 +3,6 @@ package sqlettus
 import (
 	"fmt"
 	"log/slog"
-	"strings"
 	"sync"
 
 	"github.com/tidwall/redcon"
@@ -22,37 +21,7 @@ func NewServer(addr string, client *Client) *Server {
 		client: client,
 		server: redcon.NewServer(addr,
 			func(conn redcon.Conn, cmd redcon.Command) {
-				switch strings.ToLower(string(cmd.Args[0])) {
-				default:
-					conn.WriteError("ERR unknown command '" + string(cmd.Args[0]) + "'")
-				case "command", "info":
-					conn.WriteString("OK")
-				case "echo":
-					for _, arg := range cmd.Args[1:] {
-						conn.WriteBulk(arg)
-						conn.WriteString(" ")
-					}
-				case "quit":
-					conn.WriteString("OK")
-					conn.Close()
-				case "set":
-					err := client.Set(string(cmd.Args[1]), string(cmd.Args[2]), 0)
-					if err != nil {
-						slog.Error("set", slog.String("error", err.Error()))
-						conn.WriteError("could not set the key")
-					} else {
-						conn.WriteString("OK")
-					}
-				case "get":
-					name := string(cmd.Args[1])
-					value, err := client.Get(name)
-					if err != nil {
-						slog.Error("get", slog.String("error", err.Error()), slog.String("name", name))
-						conn.WriteError("could not get the key")
-					} else {
-						conn.WriteBulkString(value)
-					}
-				}
+				handleCommand(client, conn, cmd.Args)
 			}, func(conn redcon.Conn) bool {
 				slog.Debug("connection.accept", slog.String("client", conn.RemoteAddr()))
 				return true
@@ -82,7 +51,7 @@ func (s *Server) Start() {
 	}()
 }
 
-func (s *Server) Stop() error {
+func (s *Server) Close() error {
 	slog.Info("server.stopping", slog.String("addr", s.server.Addr().String()))
 
 	err := s.server.Close()
