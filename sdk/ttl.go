@@ -1,19 +1,20 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 )
 
-func (c *Client) TTL(name string) (*int64, error) {
+func (c *Client) TTL(ctx context.Context, name string) (*int64, error) {
 	args := []any{
 		sql.Named("name", name),
 		sql.Named("now", time.Now().UnixNano()),
 	}
 
-	row := c.db.QueryRowContext(c.context, `
+	row := c.db.QueryRowContext(ctx, `
 	select
 		expires_at
 	from

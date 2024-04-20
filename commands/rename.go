@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func rename(client *sdk.Client, args [][]byte, conn redcon.Conn) {
-	err := client.Rename(string(args[1]), string(args[2]))
+	err := client.Rename(context.TODO(), string(args[1]), string(args[2]))
 	if errors.Is(err, sdk.ErrKeyDoesNotExist) {
 		conn.WriteError("key does not exist")
 

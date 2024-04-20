@@ -1,9 +1,12 @@
 package sdk
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
-func (c *Client) FlushDB() error {
-	_, err := c.db.ExecContext(c.context, `
+func (c *Client) FlushDB(ctx context.Context) error {
+	_, err := c.db.ExecContext(ctx, `
 		DELETE FROM keys;
 		VACUUM;
 		PRAGMA OPTIMIZE;

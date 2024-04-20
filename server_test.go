@@ -33,7 +33,7 @@ func TestCompatibility(t *testing.T) {
 		t.Fatalf("could not start db: %s", err)
 	}
 
-	client, err := sdk.NewClient(context.TODO(), db)
+	client, err := sdk.NewClient(db)
 	if err != nil {
 		t.Fatalf("could not create a client: %s", err)
 	}
@@ -63,7 +63,7 @@ func TestCompatibility(t *testing.T) {
 			continue
 		}
 
-		err = client.FlushDB()
+		err = client.FlushDB(context.TODO())
 		if err != nil {
 			t.Fatalf("could not flush db: %s", err)
 		}

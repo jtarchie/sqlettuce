@@ -1,13 +1,14 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 )
 
-func (c *Client) Delete(name string) (bool, error) {
+func (c *Client) Delete(ctx context.Context, name string) (bool, error) {
 	_, err := c.db.ExecContext(
-		c.context,
+		ctx,
 		`DELETE FROM keys where name = :name;`,
 		sql.Named("name", name),
 	)

@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"strconv"
@@ -20,7 +21,7 @@ func expire(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 
 	duration := time.Second * time.Duration(seconds)
 
-	err = client.Expire(string(args[1]), duration)
+	err = client.Expire(context.TODO(), string(args[1]), duration)
 
 	if errors.Is(err, sdk.ErrKeyDoesNotExist) {
 		conn.WriteInt(0)

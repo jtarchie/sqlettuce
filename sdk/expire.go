@@ -1,14 +1,15 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
 )
 
-func (c *Client) Expire(name string, ttl time.Duration) error {
+func (c *Client) Expire(ctx context.Context, name string, ttl time.Duration) error {
 	result, err := c.db.ExecContext(
-		c.context,
+		ctx,
 		`UPDATE keys SET expires_at = :expires_at WHERE name = :name`,
 		sql.Named("name", name),
 		sql.Named("expires_at", time.Now().Add(ttl).UnixNano()),

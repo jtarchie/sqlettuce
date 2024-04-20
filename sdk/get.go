@@ -1,19 +1,20 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"time"
 )
 
-func (c *Client) Get(name string) (string, error) {
+func (c *Client) Get(ctx context.Context, name string) (string, error) {
 	args := []any{
 		sql.Named("name", name),
 		sql.Named("now", time.Now().UnixNano()),
 	}
 
-	row := c.db.QueryRowContext(c.context, `
+	row := c.db.QueryRowContext(ctx, `
 	select
 		value
 	from

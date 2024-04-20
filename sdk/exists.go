@@ -1,14 +1,15 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 )
 
-func (c *Client) Exists(name string) (bool, error) {
+func (c *Client) Exists(ctx context.Context, name string) (bool, error) {
 	row := c.db.QueryRowContext(
-		c.context,
+		ctx,
 		`SELECT 1 FROM keys WHERE name = :name`,
 		sql.Named("name", name),
 	)

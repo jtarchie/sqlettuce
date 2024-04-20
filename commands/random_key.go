@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func randomKey(client *sdk.Client, conn redcon.Conn) {
-	name, err := client.RandomKey()
+	name, err := client.RandomKey(context.TODO())
 	if errors.Is(err, sdk.ErrKeyDoesNotExist) {
 		conn.WriteNull()
 

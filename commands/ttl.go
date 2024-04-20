@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"time"
@@ -10,7 +11,7 @@ import (
 )
 
 func ttl(client *sdk.Client, args [][]byte, conn redcon.Conn, duration time.Duration) {
-	ttl, err := client.TTL(string(args[1]))
+	ttl, err := client.TTL(context.TODO(), string(args[1]))
 
 	if errors.Is(err, sdk.ErrKeyDoesNotExist) {
 		conn.WriteInt(-2)

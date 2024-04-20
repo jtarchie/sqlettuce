@@ -1,7 +1,6 @@
 package sdk
 
 import (
-	"context"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -16,14 +15,12 @@ var (
 )
 
 type Client struct {
-	context context.Context
-	db      executers.Executer
+	db executers.Executer
 }
 
-func NewClient(ctx context.Context, db executers.Executer) (*Client, error) {
+func NewClient(db executers.Executer) (*Client, error) {
 	return &Client{
-		db:      db,
-		context: ctx,
+		db: db,
 	}, nil
 }
 

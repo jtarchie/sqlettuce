@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/jtarchie/sqlettus/sdk"
@@ -14,7 +15,7 @@ func set(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 		return
 	}
 
-	err := client.Set(string(args[1]), string(args[2]), 0)
+	err := client.Set(context.TODO(), string(args[1]), string(args[2]), 0)
 	if err != nil {
 		slog.Error("set", slog.String("error", err.Error()))
 		conn.WriteError("could not set the key")

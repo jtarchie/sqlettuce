@@ -1,12 +1,13 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
 )
 
-func (c *Client) Set(name string, value any, ttl time.Duration) error {
+func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Duration) error {
 	now := time.Now()
 
 	var expiresAt *int64
@@ -22,7 +23,7 @@ func (c *Client) Set(name string, value any, ttl time.Duration) error {
 		sql.Named("updated_at", now.UnixNano()),
 	}
 
-	_, err := c.db.ExecContext(c.context, `
+	_, err := c.db.ExecContext(ctx, `
 		INSERT INTO
 			keys (name, value, expires_at, updated_at)
 		values

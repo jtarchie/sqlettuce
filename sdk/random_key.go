@@ -1,14 +1,15 @@
 package sdk
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 )
 
-func (c *Client) RandomKey() (string, error) {
+func (c *Client) RandomKey(ctx context.Context) (string, error) {
 	row := c.db.QueryRowContext(
-		c.context,
+		ctx,
 		`SELECT name FROM keys ORDER BY RANDOM() LIMIT 1`,
 	)
 	if row.Err() != nil {
