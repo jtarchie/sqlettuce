@@ -8,12 +8,7 @@ import (
 	"time"
 )
 
-func (c *Client) TTL(ctx context.Context, name string) (*int64, error) {
-	args := []any{
-		sql.Named("name", name),
-		sql.Named("now", time.Now().UnixNano()),
-	}
-
+func (c *Client) TTL(ctx context.Context, name string) (*time.Duration, error) {
 	row := c.db.QueryRowContext(ctx, `
 	select
 		expires_at
@@ -25,7 +20,10 @@ func (c *Client) TTL(ctx context.Context, name string) (*int64, error) {
 			expires_at is null
 			or expires_at > :now
 		);
-	`, args...)
+	`,
+		sql.Named("name", name),
+		sql.Named("now", time.Now().UnixMilli()),
+	)
 
 	err := row.Err()
 	if err != nil {
@@ -47,7 +45,7 @@ func (c *Client) TTL(ctx context.Context, name string) (*int64, error) {
 		return nil, nil
 	}
 
-	delta := int64(time.Until(time.Unix(0, value.Int64)))
+	delta := time.Until(time.Unix(0, value.Int64*1_000_000))
 
 	return &delta, nil
 }

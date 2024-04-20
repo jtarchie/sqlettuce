@@ -15,7 +15,7 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 	var expiresAt *int64
 	if ttl > 0 {
 		expiresAt = new(int64)
-		*expiresAt = now.Add(ttl).UnixNano()
+		*expiresAt = now.Add(ttl).UnixMilli()
 	}
 
 	args := []any{
@@ -23,7 +23,7 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 		sql.Named("value", value),
 		sql.Named("type", StringType),
 		sql.Named("expires_at", expiresAt),
-		sql.Named("updated_at", now.UnixNano()),
+		sql.Named("updated_at", now.UnixMilli()),
 	}
 
 	_, err := c.db.ExecContext(ctx, `

@@ -12,7 +12,7 @@ func (c *Client) Expire(ctx context.Context, name string, ttl time.Duration) err
 		ctx,
 		`UPDATE keys SET expires_at = :expires_at WHERE name = :name`,
 		sql.Named("name", name),
-		sql.Named("expires_at", time.Now().Add(ttl).UnixNano()),
+		sql.Named("expires_at", time.Now().Add(ttl).UnixMilli()),
 	)
 	if err != nil {
 		return fmt.Errorf("could not expire key: %w", err)

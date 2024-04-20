@@ -32,5 +32,5 @@ func ttl(client *sdk.Client, args [][]byte, conn redcon.Conn, duration time.Dura
 		return
 	}
 
-	conn.WriteInt64(*ttl / int64(duration))
+	conn.WriteInt64(int64(*ttl / duration))
 }

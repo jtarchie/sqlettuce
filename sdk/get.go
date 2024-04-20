@@ -23,7 +23,7 @@ func (c *Client) Get(ctx context.Context, name string) (string, error) {
 		);
 	`,
 		sql.Named("name", name),
-		sql.Named("now", time.Now().UnixNano()),
+		sql.Named("now", time.Now().UnixMilli()),
 		sql.Named("type", StringType),
 	)
 

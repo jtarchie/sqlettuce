@@ -10,7 +10,7 @@ import (
 func (c *Client) Keys(ctx context.Context, glob string) ([]string, error) {
 	args := []any{
 		sql.Named("glob", glob),
-		sql.Named("now", time.Now().UnixNano()),
+		sql.Named("now", time.Now().UnixMilli()),
 	}
 
 	rows, err := c.db.QueryContext(ctx, `
