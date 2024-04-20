@@ -27,6 +27,8 @@ func Handle(
 		expire(client, args, conn)
 	case "get":
 		get(client, args, conn)
+	case "pttl":
+		ttl(client, args, conn, time.Millisecond)
 	case "quit":
 		quit(conn)
 	case "randomkey":
@@ -39,8 +41,6 @@ func Handle(
 		set(client, args, conn)
 	case "ttl":
 		ttl(client, args, conn, time.Second)
-	case "pttl":
-		ttl(client, args, conn, time.Millisecond)
 	default:
 		conn.WriteError("ERR unknown command '" + command + "'")
 	}
