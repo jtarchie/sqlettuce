@@ -25,6 +25,8 @@ func Handle(
 		exists(client, args, conn)
 	case "expire":
 		expire(client, args, conn)
+	case "flushdb", "flushall":
+		flush(client, args, conn)
 	case "get":
 		get(client, args, conn)
 	case "keys":
