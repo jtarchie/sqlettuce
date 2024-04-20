@@ -200,6 +200,20 @@
     "since": "1.0.0"
   },
   {
+    "name": "pttl command with timeout",
+    "command": [
+      "set k v",
+      "expire k 10",
+      "pttl k"
+    ],
+    "result": [
+      "OK",
+      1,
+      9999
+    ],
+    "since": "1.0.0"
+  },
+  {
     "name": "expire command",
     "command": [
       "expire non-exists 10"

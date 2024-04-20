@@ -9,7 +9,7 @@ import (
 	"github.com/tidwall/redcon"
 )
 
-func ttl(client *sdk.Client, args [][]byte, conn redcon.Conn) {
+func ttl(client *sdk.Client, args [][]byte, conn redcon.Conn, duration time.Duration) {
 	ttl, err := client.TTL(string(args[1]))
 
 	if errors.Is(err, sdk.ErrKeyDoesNotExist) {
@@ -31,5 +31,5 @@ func ttl(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 		return
 	}
 
-	conn.WriteInt64(*ttl / int64(time.Second))
+	conn.WriteInt64(*ttl / int64(duration))
 }

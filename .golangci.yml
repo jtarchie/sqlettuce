@@ -17,6 +17,7 @@ linters:
   - gocognit
   - containedctx
   - gomnd
+  - nilnil
 
   # linters deprecated
   - deadcode

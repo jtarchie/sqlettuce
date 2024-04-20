@@ -2,6 +2,7 @@ package commands
 
 import (
 	"strings"
+	"time"
 
 	"github.com/jtarchie/sqlettus/sdk"
 	"github.com/tidwall/redcon"
@@ -37,7 +38,9 @@ func Handle(
 	case "set":
 		set(client, args, conn)
 	case "ttl":
-		ttl(client, args, conn)
+		ttl(client, args, conn, time.Second)
+	case "pttl":
+		ttl(client, args, conn, time.Millisecond)
 	default:
 		conn.WriteError("ERR unknown command '" + command + "'")
 	}

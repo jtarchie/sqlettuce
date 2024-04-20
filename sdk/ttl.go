@@ -31,7 +31,7 @@ func (c *Client) TTL(name string) (*int64, error) {
 		return nil, fmt.Errorf("could not find key: %w", err)
 	}
 
-	var value *int64
+	var value sql.NullInt64
 
 	err = row.Scan(&value)
 	if errors.Is(err, sql.ErrNoRows) {
@@ -42,7 +42,11 @@ func (c *Client) TTL(name string) (*int64, error) {
 		return nil, fmt.Errorf("could not read value: %w", err)
 	}
 
-	delta := int64(time.Until(time.Unix(0, *value)))
+	if !value.Valid {
+		return nil, nil
+	}
+
+	delta := int64(time.Until(time.Unix(0, value.Int64)))
 
 	return &delta, nil
 }
