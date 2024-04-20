@@ -9,23 +9,23 @@ import (
 )
 
 func (c *Client) Get(ctx context.Context, name string) (string, error) {
-	args := []any{
+	row := c.db.QueryRowContext(ctx, `
+	SELECT
+		value
+	FROM
+		keys
+	WHERE
+		name = :name AND
+		type = :type AND
+		(
+			expires_at IS NULL OR
+			expires_at > :now
+		);
+	`,
 		sql.Named("name", name),
 		sql.Named("now", time.Now().UnixNano()),
-	}
-
-	row := c.db.QueryRowContext(ctx, `
-	select
-		value
-	from
-		keys
-	where
-		name = :name
-		and (
-			expires_at is null
-			or expires_at > :now
-		);
-	`, args...)
+		sql.Named("type", StringType),
+	)
 
 	err := row.Err()
 	if err != nil {
