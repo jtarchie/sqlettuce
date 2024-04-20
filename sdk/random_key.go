@@ -10,7 +10,7 @@ import (
 func (c *Client) RandomKey(ctx context.Context) (string, error) {
 	row := c.db.QueryRowContext(
 		ctx,
-		`SELECT name FROM keys ORDER BY RANDOM() LIMIT 1`,
+		`SELECT name FROM active_keys ORDER BY RANDOM() LIMIT 1`,
 	)
 	if row.Err() != nil {
 		return "", fmt.Errorf("could select random value: %w", row.Err())

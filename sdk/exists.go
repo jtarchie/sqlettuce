@@ -10,7 +10,7 @@ import (
 func (c *Client) Exists(ctx context.Context, name string) (bool, error) {
 	row := c.db.QueryRowContext(
 		ctx,
-		`SELECT 1 FROM keys WHERE name = :name`,
+		`SELECT 1 FROM active_keys WHERE name = :name`,
 		sql.Named("name", name),
 	)
 	if row.Err() != nil {

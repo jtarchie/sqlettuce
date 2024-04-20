@@ -63,7 +63,7 @@ func (c *Client) ListPush(ctx context.Context, name string, values ...string) (i
 
 		row := tx.QueryRowContext(
 			ctx,
-			`SELECT json_array_length(value) FROM keys WHERE name = :name`,
+			`SELECT json_array_length(value) FROM active_keys WHERE name = :name`,
 			sql.Named("name", name),
 		)
 

@@ -28,7 +28,7 @@ func (t Type) String() string {
 func (c *Client) Type(ctx context.Context, name string) (Type, error) {
 	row := c.db.QueryRowContext(
 		ctx,
-		`SELECT type FROM keys WHERE name = :name`,
+		`SELECT type FROM active_keys WHERE name = :name`,
 		sql.Named("name", name),
 	)
 	if row.Err() != nil {

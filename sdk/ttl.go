@@ -13,16 +13,11 @@ func (c *Client) TTL(ctx context.Context, name string) (*time.Duration, error) {
 	select
 		expires_at
 	from
-		keys
+		active_keys
 	where
-		name = :name
-		and (
-			expires_at is null
-			or expires_at > :now
-		);
+		name = :name;
 	`,
 		sql.Named("name", name),
-		sql.Named("now", time.Now().UnixMilli()),
 	)
 
 	err := row.Err()

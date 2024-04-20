@@ -13,7 +13,7 @@ func (c *Client) Sort(ctx context.Context, name string) ([]string, error) {
 		SELECT
 			json_each.value
 		FROM
-			keys,
+			active_keys keys,
 			json_each(keys.value)
 		WHERE
 			keys.name = :name AND

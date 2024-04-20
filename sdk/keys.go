@@ -4,27 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
 )
 
 func (c *Client) Keys(ctx context.Context, glob string) ([]string, error) {
-	args := []any{
-		sql.Named("glob", glob),
-		sql.Named("now", time.Now().UnixMilli()),
-	}
-
 	rows, err := c.db.QueryContext(ctx, `
 	select
 		name
 	from
-		keys
+		active_keys
 	where
-		name GLOB :glob
-		and (
-			expires_at is null
-			or expires_at > :now
-		);
-	`, args...)
+		name GLOB :glob;
+	`,
+		sql.Named("glob", glob),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("could not glob names: %w", err)
 	}

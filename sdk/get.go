@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"time"
 )
 
 func (c *Client) Get(ctx context.Context, name string) (string, error) {
@@ -13,17 +12,12 @@ func (c *Client) Get(ctx context.Context, name string) (string, error) {
 	SELECT
 		value
 	FROM
-		keys
+		active_keys
 	WHERE
 		name = :name AND
-		type = :type AND
-		(
-			expires_at IS NULL OR
-			expires_at > :now
-		);
+		type = :type;
 	`,
 		sql.Named("name", name),
-		sql.Named("now", time.Now().UnixMilli()),
 		sql.Named("type", StringType),
 	)
 
