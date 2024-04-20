@@ -19,6 +19,10 @@ func Handle(
 		conn.WriteString("OK")
 	case "dbsize":
 		dbsize(client, conn)
+	case "decr":
+		incr(client, args, conn, -1)
+	case "decrby":
+		incrBy(client, args, conn, -1)
 	case "del", "unlink":
 		del(client, args, conn)
 	case "echo":
@@ -33,6 +37,10 @@ func Handle(
 		get(client, args, conn)
 	case "keys":
 		keys(client, args, conn)
+	case "incr":
+		incr(client, args, conn, 1)
+	case "incrby":
+		incrBy(client, args, conn, 1)
 	case "lpush":
 		lpush(client, args, conn)
 	case "mset":

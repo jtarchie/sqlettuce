@@ -4290,11 +4290,13 @@
     "name": "decrby command",
     "command": [
       "set mykey 10",
-      "decrby mykey 3"
+      "decrby mykey 3",
+      "get mykey"
     ],
     "result": [
       "OK",
-      7
+      7,
+      "7"
     ],
     "since": "1.0.0"
   },

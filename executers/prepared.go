@@ -1,3 +1,4 @@
+//nolint: sqlclosecheck, wrapcheck
 package executers
 
 import (
@@ -68,40 +69,35 @@ func (p *PreparedExecuter) PrepareContext(context.Context, string) (*sql.Stmt, e
 
 func (p *PreparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	if _, ok := p.prepared[query]; !ok {
-		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
-			return nil, fmt.Errorf("could not prepare statement: %w", err)
+			return p.db.ExecContext(ctx, query, args...)
 		}
 
 		p.prepared[query] = statement
 	}
 
-	//nolint: wrapcheck
 	return p.prepared[query].ExecContext(ctx, args...)
 }
 
 func (p *PreparedExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	if _, ok := p.prepared[query]; !ok {
-		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
-			return nil, fmt.Errorf("could not prepare statement: %w", err)
+			return p.db.QueryContext(ctx, query, args...)
 		}
 
 		p.prepared[query] = statement
 	}
 
-	//nolint: wrapcheck
 	return p.prepared[query].QueryContext(ctx, args...)
 }
 
 func (p *PreparedExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	if _, ok := p.prepared[query]; !ok {
-		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
-			return nil
+			return p.db.QueryRowContext(ctx, query, args...)
 		}
 
 		p.prepared[query] = statement
@@ -115,7 +111,6 @@ func (p *PreparedExecuter) Close() error {
 		_ = prepared.Close()
 	}
 
-	//nolint: wrapcheck
 	return p.db.Close()
 }
 
