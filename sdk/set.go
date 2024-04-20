@@ -12,14 +12,14 @@ func (c *Client) Set(name string, value any, ttl time.Duration) error {
 	var etime *int64
 	if ttl > 0 {
 		etime = new(int64)
-		*etime = now.Add(ttl).UnixMilli()
+		*etime = now.Add(ttl).UnixNano()
 	}
 
 	args := []any{
 		sql.Named("name", name),
 		sql.Named("value", value),
 		sql.Named("etime", etime),
-		sql.Named("mtime", now.UnixMilli()),
+		sql.Named("mtime", now.UnixNano()),
 	}
 
 	_, err := c.db.ExecContext(c.context, `

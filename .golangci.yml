@@ -16,6 +16,7 @@ linters:
   - cyclop
   - gocognit
   - containedctx
+  - gomnd
 
   # linters deprecated
   - deadcode

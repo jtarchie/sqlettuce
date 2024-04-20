@@ -22,6 +22,8 @@ func Handle(
 		echo(args, conn)
 	case "exists":
 		exists(client, args, conn)
+	case "expire":
+		expire(client, args, conn)
 	case "get":
 		get(client, args, conn)
 	case "quit":
@@ -34,6 +36,8 @@ func Handle(
 		renamenx(client, args, conn)
 	case "set":
 		set(client, args, conn)
+	case "ttl":
+		ttl(client, args, conn)
 	default:
 		conn.WriteError("ERR unknown command '" + command + "'")
 	}

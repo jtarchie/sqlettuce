@@ -164,12 +164,38 @@
     "since": "1.0.0"
   },
   {
+    "name": "ttl command with timeout",
+    "command": [
+      "set k v",
+      "expire k 10",
+      "ttl k"
+    ],
+    "result": [
+      "OK",
+      1,
+      9
+    ],
+    "since": "1.0.0"
+  },
+  {
     "name": "pttl command",
     "command": [
       "pttl non-exists"
     ],
     "result": [
       -2
+    ],
+    "since": "1.0.0"
+  },
+  {
+    "name": "pttl command no timeout",
+    "command": [
+      "set k v",
+      "pttl k"
+    ],
+    "result": [
+      "OK",
+      -1
     ],
     "since": "1.0.0"
   },

@@ -8,6 +8,12 @@ import (
 )
 
 func set(client *sdk.Client, args [][]byte, conn redcon.Conn) {
+	if len(args) < 3 {
+		conn.WriteError("Not enough args")
+
+		return
+	}
+
 	err := client.Set(string(args[1]), string(args[2]), 0)
 	if err != nil {
 		slog.Error("set", slog.String("error", err.Error()))

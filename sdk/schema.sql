@@ -13,6 +13,4 @@ CREATE TABLE IF NOT EXISTS keys (
   mtime integer not null
 );
 
-CREATE INDEX IF NOT EXISTS etime_idx ON keys(etime)
-WHERE
-  etime IS NOT NULL;
+CREATE INDEX IF NOT EXISTS etime_idx ON keys(etime);
