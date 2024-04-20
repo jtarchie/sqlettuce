@@ -17,6 +17,8 @@ func Handle(
 	switch strings.ToLower(command) {
 	case "command", "info":
 		conn.WriteString("OK")
+	case "dbsize":
+		dbsize(client, conn)
 	case "del", "unlink":
 		del(client, args, conn)
 	case "echo":

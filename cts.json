@@ -6639,12 +6639,27 @@
     "tags": "cluster"
   },
   {
-    "name": "dbsize command",
+    "name": "dbsize command - no keys",
     "command": [
       "dbsize"
     ],
     "result": [
       0
+    ],
+    "since": "1.0.0",
+    "tags": "standalone"
+  },
+  {
+    "name": "dbsize command - some keys",
+    "command": [
+      "set k v",
+      "set k1 v1",
+      "dbsize"
+    ],
+    "result": [
+      "OK",
+      "OK",
+      2
     ],
     "since": "1.0.0",
     "tags": "standalone"
