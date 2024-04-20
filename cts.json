@@ -503,12 +503,16 @@
     "name": "keys command",
     "command": [
       "mset firstname Jack lastname Stuntman age 35",
-      "keys a??"
+      "keys a??",
+      "keys ?irstname"
     ],
     "result": [
       "OK",
       [
         "age"
+      ],
+      [
+        "firstname"
       ]
     ],
     "since": "1.0.0",

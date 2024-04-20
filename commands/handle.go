@@ -27,6 +27,10 @@ func Handle(
 		expire(client, args, conn)
 	case "get":
 		get(client, args, conn)
+	case "keys":
+		keys(client, args, conn)
+	case "mset":
+		mset(client, args, conn)
 	case "pttl":
 		ttl(client, args, conn, time.Millisecond)
 	case "quit":
