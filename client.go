@@ -84,7 +84,7 @@ func (c *Client) Set(name string, value any, ttl time.Duration) error {
 			mtime = excluded.mtime
 	`, args...)
 	if err != nil {
-		return fmt.Errorf("could not set key: %q", err)
+		return fmt.Errorf("could not set key: %w", err)
 	}
 
 	return nil
@@ -137,7 +137,7 @@ func (c *Client) Delete(name string) (bool, error) {
 		args...,
 	)
 	if err != nil {
-		return false, fmt.Errorf("could not flush db: %q", err)
+		return false, fmt.Errorf("could not flush db: %w", err)
 	}
 
 	return true, nil
@@ -201,6 +201,29 @@ func (c *Client) RenameIfNotExists(old string, new string) error {
 	return nil
 }
 
+func (c *Client) RandomKey() (string, error) {
+	row := c.db.QueryRowContext(
+		c.context,
+		`SELECT name FROM keys ORDER BY RANDOM() LIMIT 1`,
+	)
+	if row.Err() != nil {
+		return "", fmt.Errorf("could select random value: %w", row.Err())
+	}
+
+	var name string
+
+	err := row.Scan(&name)
+	if err == sql.ErrNoRows {
+		return "", ErrKeyDoesNotExist
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("could not scan value: %w", err)
+	}
+
+	return name, nil
+}
+
 func (c *Client) FlushDB() error {
 	_, err := c.db.ExecContext(c.context, `
 		DELETE FROM keys;
@@ -208,7 +231,7 @@ func (c *Client) FlushDB() error {
 		PRAGMA OPTIMIZE;
 	`)
 	if err != nil {
-		return fmt.Errorf("could not flush db: %q", err)
+		return fmt.Errorf("could not flush db: %w", err)
 	}
 
 	return nil

@@ -48,6 +48,7 @@ func TestCompatibility(t *testing.T) {
 
 	rdb := redis.NewClient(&redis.Options{
 		Addr: ":6464",
+		Protocol: 2,
 	})
 
 	for _, test := range payload {
@@ -68,7 +69,7 @@ func TestCompatibility(t *testing.T) {
 
 			result, err := rdb.Do(context.TODO(), args...).Result()
 
-			if err != nil {
+			if err != nil && err.Error() != "redis: nil" {
 				t.Fatalf("could not run command %q: %s", command, err)
 			}
 

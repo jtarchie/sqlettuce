@@ -121,6 +121,17 @@
     "tags": "standalone"
   },
   {
+    "name": "randomkey command when no key exists",
+    "command": [
+      "randomkey"
+    ],
+    "result": [
+      null
+    ],
+    "since": "1.0.0",
+    "tags": "standalone"
+  },
+  {
     "name": "exists command",
     "command": [
       "set k v",

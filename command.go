@@ -84,5 +84,19 @@ func handleCommand(
 		} else {
 			conn.WriteBulkString(value)
 		}
+	case "randomkey":
+		name, err := client.RandomKey()
+		if errors.Is(err, ErrKeyDoesNotExist) {
+			conn.WriteNull()
+			return
+		}
+
+		if err != nil {
+			slog.Error("randomkey", slog.String("error", err.Error()))
+			conn.WriteError("could not get random key")
+			return
+		}
+
+		conn.WriteBulkString(name)
 	}
 }
