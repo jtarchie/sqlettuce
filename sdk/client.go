@@ -2,7 +2,6 @@ package sdk
 
 import (
 	"context"
-	"database/sql"
 	_ "embed"
 	"errors"
 	"fmt"
@@ -16,29 +15,14 @@ var (
 	ErrKeyDoesNotExist  = errors.New("key does not exist")
 )
 
-//go:embed schema.sql
-var schemaSQL string
-
 type Client struct {
 	context context.Context
 	db      executers.Executer
 }
 
-func NewClient(ctx context.Context, filename string) (*Client, error) {
-	db, err := sql.Open("sqlite3", filename)
-	if err != nil {
-		return nil, fmt.Errorf("could open sqlite3: %w", err)
-	}
-
-	_, err = db.ExecContext(ctx, schemaSQL)
-	if err != nil {
-		return nil, fmt.Errorf("could not create schema: %w", err)
-	}
-
-	db.SetMaxOpenConns(1)
-
+func NewClient(ctx context.Context, db executers.Executer) (*Client, error) {
 	return &Client{
-		db:      executers.NewPrepared(db),
+		db:      db,
 		context: ctx,
 	}, nil
 }

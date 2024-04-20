@@ -9,6 +9,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/jtarchie/sqlettus"
+	"github.com/jtarchie/sqlettus/executers"
 	"github.com/jtarchie/sqlettus/sdk"
 	"github.com/redis/go-redis/v9"
 )
@@ -27,7 +28,12 @@ type Compatibility []struct {
 func TestCompatibility(t *testing.T) {
 	var payload Compatibility
 
-	client, err := sdk.NewClient(context.TODO(), ":memory:")
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		t.Fatalf("could not start db: %s", err)
+	}
+
+	client, err := sdk.NewClient(context.TODO(), db)
 	if err != nil {
 		t.Fatalf("could not create a client: %s", err)
 	}

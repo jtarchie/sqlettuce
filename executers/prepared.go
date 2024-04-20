@@ -3,9 +3,13 @@ package executers
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"errors"
 	"fmt"
 )
+
+//go:embed schema.sql
+var schemaSQL string
 
 type PreparedExecuter struct {
 	db       *sql.DB
@@ -17,6 +21,22 @@ func NewPrepared(db *sql.DB) *PreparedExecuter {
 		db:       db,
 		prepared: map[string]*sql.Stmt{},
 	}
+}
+
+func FromDB(filename string) (*PreparedExecuter, error) {
+	db, err := sql.Open("sqlite3", filename)
+	if err != nil {
+		return nil, fmt.Errorf("could open sqlite3: %w", err)
+	}
+
+	_, err = db.ExecContext(context.TODO(), schemaSQL)
+	if err != nil {
+		return nil, fmt.Errorf("could not create schema: %w", err)
+	}
+
+	db.SetMaxOpenConns(1)
+
+	return NewPrepared(db), nil
 }
 
 func (p *PreparedExecuter) WithTX(ctx context.Context, fun func(Executer) error) error {

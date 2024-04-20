@@ -10,6 +10,7 @@ import (
 
 	"github.com/alecthomas/kong"
 	"github.com/jtarchie/sqlettus"
+	"github.com/jtarchie/sqlettus/executers"
 	"github.com/jtarchie/sqlettus/sdk"
 )
 
@@ -22,7 +23,12 @@ func (c *cli) Run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	client, err := sdk.NewClient(ctx, c.Path)
+	db, err := executers.FromDB(c.Path)
+	if err != nil {
+		return fmt.Errorf("could not start db: %w", err)
+	}
+
+	client, err := sdk.NewClient(ctx, db)
 	if err != nil {
 		return fmt.Errorf("could not start client: %w", err)
 	}
