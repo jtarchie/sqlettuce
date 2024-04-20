@@ -166,6 +166,41 @@ func (c *Client) Rename(old string, new string) error {
 	return nil
 }
 
+func (c *Client) RenameIfNotExists(old string, new string) error {
+	err := c.db.WithTX(c.context, func(tx Executer) error {
+		row := tx.QueryRowContext(c.context, `SELECT 1 FROM keys WHERE name = :new`, sql.Named("new", new))
+		if row.Err() != nil {
+			return fmt.Errorf("could not find new: %w", row.Err())
+		}
+
+		var value int
+		
+		err := row.Scan(&value)
+		if err == sql.ErrNoRows {
+			_, err = tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", new), sql.Named("old", old))
+			if err != nil {
+				return fmt.Errorf("could not rename key: %w", err)
+			}
+		}
+
+		if err != nil {
+			return fmt.Errorf("could not scan: %w", err)
+		}
+
+		if value == 1 {
+			return ErrKeyAlreadyExists
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("could not rename: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Client) FlushDB() error {
 	_, err := c.db.ExecContext(c.context, `
 		DELETE FROM keys;

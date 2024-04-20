@@ -80,6 +80,21 @@
     "tags": "standalone"
   },
   {
+    "name": "renamenx command key already exists",
+    "command": [
+      "set k 1",
+      "set kk 2",
+      "renamenx k kk"
+    ],
+    "result": [
+      "OK",
+      "OK",
+      0
+    ],
+    "since": "1.0.0",
+    "tags": "standalone"
+  },
+  {
     "name": "renamenx command",
     "command": [
       "set k v",

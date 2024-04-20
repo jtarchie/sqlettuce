@@ -38,8 +38,23 @@ func handleCommand(
 			conn.WriteError("could not rename")
 			return
 		}
-		
+
 		conn.WriteString("OK")
+
+	case "renamenx":
+		err := client.RenameIfNotExists(string(args[1]), string(args[2]))
+		if errors.Is(err, ErrKeyAlreadyExists) {
+			conn.WriteInt(0)
+			return
+		}
+
+		if err != nil {
+			slog.Error("renamenx", slog.String("error", err.Error()))
+			conn.WriteError("could not renamenx")
+			return
+		}
+		
+		conn.WriteInt(1)
 	case "del", "unlink":
 		count := 0
 		for _, name := range args[1:] {
