@@ -41,6 +41,8 @@ func Handle(
 		incr(client, args, conn, 1)
 	case "incrby":
 		incrBy(client, args, conn, 1)
+	case "lindex":
+		lindex(client, args, conn)
 	case "lpush":
 		lpush(client, args, conn)
 	case "mset":
