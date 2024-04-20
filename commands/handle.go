@@ -43,6 +43,10 @@ func Handle(
 		incrBy(client, args, conn, 1)
 	case "lindex":
 		lindex(client, args, conn)
+	case "llen":
+		llen(client, args, conn)
+	case "lpop":
+		lpop(client, args, conn)
 	case "lpush":
 		lpush(client, args, conn)
 	case "mset":
@@ -57,6 +61,8 @@ func Handle(
 		rename(client, args, conn)
 	case "renamenx":
 		renamenx(client, args, conn)
+	case "rpush":
+		rpush(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "sort":

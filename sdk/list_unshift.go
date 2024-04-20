@@ -8,7 +8,7 @@ import (
 	"github.com/jtarchie/sqlettus/executers"
 )
 
-func (c *Client) ListPush(ctx context.Context, name string, values ...string) (int64, error) {
+func (c *Client) ListUnshift(ctx context.Context, name string, values ...string) (int64, error) {
 	var length int64
 
 	err := c.db.WithTX(ctx, func(tx executers.Executer) error {

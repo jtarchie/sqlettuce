@@ -18,6 +18,7 @@ linters:
   - containedctx
   - gomnd
   - nilnil
+  - dupl
 
   # linters deprecated
   - deadcode

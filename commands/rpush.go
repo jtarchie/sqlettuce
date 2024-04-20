@@ -8,7 +8,7 @@ import (
 	"github.com/tidwall/redcon"
 )
 
-func lpush(client *sdk.Client, args [][]byte, conn redcon.Conn) {
+func rpush(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 	if len(args) < 3 {
 		conn.WriteError("not enough arguments")
 
@@ -22,7 +22,7 @@ func lpush(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 		values = append(values, string(value))
 	}
 
-	length, err := client.ListUnshift(context.TODO(), name, values...)
+	length, err := client.ListPush(context.TODO(), name, values...)
 	if err != nil {
 		slog.Error("lpush", slog.String("error", err.Error()))
 		conn.WriteError("unexpected error")
