@@ -21,8 +21,8 @@ func (c *Client) Get(name string) (string, error) {
 	where
 		name = :name
 		and (
-			etime is null
-			or etime > :now
+			expires_at is null
+			or expires_at > :now
 		);
 	`, args...)
 

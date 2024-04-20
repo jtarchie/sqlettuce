@@ -15,14 +15,14 @@ func (c *Client) TTL(name string) (*int64, error) {
 
 	row := c.db.QueryRowContext(c.context, `
 	select
-		etime
+		expires_at
 	from
 		keys
 	where
 		name = :name
 		and (
-			etime is null
-			or etime > :now
+			expires_at is null
+			or expires_at > :now
 		);
 	`, args...)
 

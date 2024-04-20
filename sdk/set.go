@@ -9,30 +9,30 @@ import (
 func (c *Client) Set(name string, value any, ttl time.Duration) error {
 	now := time.Now()
 
-	var etime *int64
+	var expiresAt *int64
 	if ttl > 0 {
-		etime = new(int64)
-		*etime = now.Add(ttl).UnixNano()
+		expiresAt = new(int64)
+		*expiresAt = now.Add(ttl).UnixNano()
 	}
 
 	args := []any{
 		sql.Named("name", name),
 		sql.Named("value", value),
-		sql.Named("etime", etime),
-		sql.Named("mtime", now.UnixNano()),
+		sql.Named("expires_at", expiresAt),
+		sql.Named("updated_at", now.UnixNano()),
 	}
 
 	_, err := c.db.ExecContext(c.context, `
 		INSERT INTO
-			keys (name, value, etime, mtime)
+			keys (name, value, expires_at, updated_at)
 		values
-			(:name, :value, :etime, :mtime) ON CONFLICT (name) do
+			(:name, :value, :expires_at, :updated_at) ON CONFLICT (name) do
 		UPDATE
 		SET
 			version = version + 1,
 			value = excluded.value,
-			etime = excluded.etime,
-			mtime = excluded.mtime
+			expires_at = excluded.expires_at,
+			updated_at = excluded.updated_at
 	`, args...)
 	if err != nil {
 		return fmt.Errorf("could not set key: %w", err)
