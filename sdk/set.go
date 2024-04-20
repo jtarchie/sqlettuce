@@ -47,7 +47,7 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 
 func (c *Client) MSet(ctx context.Context, pairs ...[2]string) error {
 	err := c.db.WithTX(ctx, func(tx executers.Executer) error {
-		client, _ := NewClient(tx)
+		client := NewClient(tx)
 
 		for _, pair := range pairs {
 			err := client.Set(ctx, pair[0], pair[1], 0)

@@ -28,11 +28,7 @@ func (c *cli) Run() error {
 		return fmt.Errorf("could not start db: %w", err)
 	}
 
-	client, err := sdk.NewClient(db)
-	if err != nil {
-		return fmt.Errorf("could not start client: %w", err)
-	}
-
+	client := sdk.NewClient(db)
 	server := sqlettus.NewServer(
 		c.Addr,
 		client,

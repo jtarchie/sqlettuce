@@ -18,10 +18,10 @@ type Client struct {
 	db executers.Executer
 }
 
-func NewClient(db executers.Executer) (*Client, error) {
+func NewClient(db executers.Executer) *Client {
 	return &Client{
 		db: db,
-	}, nil
+	}
 }
 
 func (c *Client) Close() error {
