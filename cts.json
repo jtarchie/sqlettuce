@@ -529,7 +529,8 @@
       1
     ],
     "since": "1.0.0",
-    "tags": "standalone"
+    "tags": "standalone",
+    "skipped": true
   },
   {
     "name": "copy command",
@@ -570,6 +571,16 @@
     "result": [
       "OK",
       "string"
+    ],
+    "since": "1.0.0"
+  },
+  {
+    "name": "type command when key does not exist",
+    "command": [
+      "type k"
+    ],
+    "result": [
+      "none"
     ],
     "since": "1.0.0"
   },

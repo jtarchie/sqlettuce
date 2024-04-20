@@ -21,15 +21,16 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 	args := []any{
 		sql.Named("name", name),
 		sql.Named("value", value),
+		sql.Named("type", StringType),
 		sql.Named("expires_at", expiresAt),
 		sql.Named("updated_at", now.UnixNano()),
 	}
 
 	_, err := c.db.ExecContext(ctx, `
 		INSERT INTO
-			keys (name, value, expires_at, updated_at)
+			keys (name, value, type, expires_at, updated_at)
 		values
-			(:name, :value, :expires_at, :updated_at) ON CONFLICT (name) do
+			(:name, :value, :type, :expires_at, :updated_at) ON CONFLICT (name) do
 		UPDATE
 		SET
 			version = version + 1,

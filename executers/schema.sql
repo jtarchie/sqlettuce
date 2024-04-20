@@ -13,9 +13,10 @@ PRAGMA busy_timeout = 5000;
 CREATE TABLE IF NOT EXISTS keys (
   name TEXT NOT NULL PRIMARY KEY,
   value TEXT NOT NULL,
-  version integer not null default 0,
-  expires_at integer,
-  updated_at integer not null
+  type INTEGER NOT NULL,
+  version INTEGER not null default 0,
+  expires_at INTEGER,
+  updated_at INTEGER not null
 );
 
 CREATE INDEX IF NOT EXISTS expires_at_idx ON keys(expires_at);

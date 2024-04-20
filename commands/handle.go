@@ -45,6 +45,8 @@ func Handle(
 		set(client, args, conn)
 	case "ttl":
 		ttl(client, args, conn, time.Second)
+	case "type":
+		keyType(client, args, conn)
 	default:
 		conn.WriteError("ERR unknown command '" + command + "'")
 	}
