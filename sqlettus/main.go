@@ -13,8 +13,8 @@ import (
 )
 
 type cli struct {
-	Path string `short:"p" help:"path to database file" default:":memory:" require:""`
-	Addr string `short:"a" help:"server address" default:"localhost:6379"`
+	Path string `default:":memory:"       help:"path to database file" require:"" short:"p"`
+	Addr string `default:"localhost:6379" help:"server address"        short:"a"`
 }
 
 func (c *cli) Run() error {

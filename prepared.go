@@ -16,7 +16,7 @@ func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 	if err != nil {
 		return fmt.Errorf("could not begin transaction: %w", err)
 	}
-	defer tx.Rollback()
+	defer func() { _ = tx.Rollback() }()
 
 	err = fun(&txExecuter{tx})
 	if err != nil {

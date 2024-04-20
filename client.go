@@ -3,11 +3,10 @@ package sqlettus
 import (
 	"context"
 	"database/sql"
+	_ "embed"
 	"errors"
 	"fmt"
 	"time"
-
-	_ "embed"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -158,7 +157,6 @@ func (c *Client) Rename(old string, new string) error {
 
 		return nil
 	})
-
 	if err != nil {
 		return fmt.Errorf("could not rename: %w", err)
 	}
@@ -174,7 +172,7 @@ func (c *Client) RenameIfNotExists(old string, new string) error {
 		}
 
 		var value int
-		
+
 		err := row.Scan(&value)
 		if err == sql.ErrNoRows {
 			_, err = tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", new), sql.Named("old", old))
@@ -193,7 +191,6 @@ func (c *Client) RenameIfNotExists(old string, new string) error {
 
 		return nil
 	})
-
 	if err != nil {
 		return fmt.Errorf("could not rename: %w", err)
 	}

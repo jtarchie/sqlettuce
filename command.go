@@ -53,7 +53,7 @@ func handleCommand(
 			conn.WriteError("could not renamenx")
 			return
 		}
-		
+
 		conn.WriteInt(1)
 	case "del", "unlink":
 		count := 0

@@ -47,7 +47,7 @@ func TestCompatibility(t *testing.T) {
 	}
 
 	rdb := redis.NewClient(&redis.Options{
-		Addr: ":6464",
+		Addr:     ":6464",
 		Protocol: 2,
 	})
 
@@ -79,7 +79,10 @@ func TestCompatibility(t *testing.T) {
 			}
 
 			var actual interface{}
-			json.Unmarshal(contents, &actual)
+			err = json.Unmarshal(contents, &actual)
+			if err != nil {
+				t.Fatalf("could not unmarshal: %s", err)
+			}
 
 			if diff := cmp.Diff(test.Result[index], actual); diff != "" {
 				t.Fatalf("%q (-want +got):\n%s", test.Name, diff)
