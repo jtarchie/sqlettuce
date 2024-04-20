@@ -587,17 +587,18 @@
   {
     "name": "sort command",
     "command": [
-      "lpush list 5 3 4 1 2",
+      "lpush list 5 3 4 10 1 2",
       "sort list"
     ],
     "result": [
-      5,
+      6,
       [
         "1",
         "2",
         "3",
         "4",
-        "5"
+        "5",
+        "10"
       ]
     ],
     "since": "1.0.0"

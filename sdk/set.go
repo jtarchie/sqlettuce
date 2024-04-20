@@ -18,13 +18,6 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 		*expiresAt = now.Add(ttl).UnixMilli()
 	}
 
-	args := []any{
-		sql.Named("name", name),
-		sql.Named("value", value),
-		sql.Named("type", StringType),
-		sql.Named("expires_at", expiresAt),
-	}
-
 	_, err := c.db.ExecContext(ctx, `
 		INSERT INTO
 			keys (name, value, type, expires_at)
@@ -35,7 +28,12 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 			value = excluded.value,
 			type = excluded.type,
 			expires_at = excluded.expires_at
-	`, args...)
+	`,
+		sql.Named("name", name),
+		sql.Named("value", value),
+		sql.Named("type", StringType),
+		sql.Named("expires_at", expiresAt),
+	)
 	if err != nil {
 		return fmt.Errorf("could not set key: %w", err)
 	}

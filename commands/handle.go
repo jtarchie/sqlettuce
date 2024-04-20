@@ -31,6 +31,8 @@ func Handle(
 		get(client, args, conn)
 	case "keys":
 		keys(client, args, conn)
+	case "lpush":
+		lpush(client, args, conn)
 	case "mset":
 		mset(client, args, conn)
 	case "pttl":
@@ -45,6 +47,8 @@ func Handle(
 		renamenx(client, args, conn)
 	case "set":
 		set(client, args, conn)
+	case "sort":
+		sort(client, args, conn)
 	case "ttl":
 		ttl(client, args, conn, time.Second)
 	case "type":

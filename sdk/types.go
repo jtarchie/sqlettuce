@@ -10,13 +10,16 @@ import (
 type Type int
 
 const (
-	StringType = Type(1)
+	StringType Type = Type(1)
+	ListType   Type = Type(2)
 )
 
 func (t Type) String() string {
 	switch t {
 	case StringType:
 		return "string"
+	case ListType:
+		return "list"
 	default:
 		return "unknown"
 	}
