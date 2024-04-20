@@ -8,4 +8,5 @@ tasks:
     cmds:
     - task: format
     - task: lint
+    - go build sqlettus/main.go
     - task: test
