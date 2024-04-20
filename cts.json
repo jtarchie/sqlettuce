@@ -144,6 +144,16 @@
     "since": "1.0.0"
   },
   {
+    "name": "exists command when does not exist",
+    "command": [
+      "exists k"
+    ],
+    "result": [
+      0
+    ],
+    "since": "1.0.0"
+  },
+  {
     "name": "ttl command",
     "command": [
       "ttl non-exists"

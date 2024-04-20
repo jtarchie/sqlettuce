@@ -67,6 +67,18 @@ func handleCommand(
 			}
 		}
 		conn.WriteInt(count)
+	case "exists":
+		count := 0
+		for _, name := range args[1:] {
+			ok, err := client.Exists(string(name))
+			if err != nil {
+				slog.Error("del", slog.String("error", err.Error()))
+			}
+			if ok {
+				count++
+			}
+		}
+		conn.WriteInt(count)
 	case "set":
 		err := client.Set(string(args[1]), string(args[2]), 0)
 		if err != nil {

@@ -137,7 +137,7 @@ func (c *Client) Delete(name string) (bool, error) {
 		args...,
 	)
 	if err != nil {
-		return false, fmt.Errorf("could not flush db: %w", err)
+		return false, fmt.Errorf("could not delete key: %w", err)
 	}
 
 	return true, nil
@@ -235,6 +235,26 @@ func (c *Client) FlushDB() error {
 	}
 
 	return nil
+}
+
+func (c *Client) Exists(name string) (bool, error) {
+	row := c.db.QueryRowContext(
+		c.context,
+		`SELECT 1 FROM keys WHERE name = :name`,
+		sql.Named("name", name),
+	)
+	if row.Err() != nil {
+		return false, fmt.Errorf("could not read key: %w", row.Err())
+	}
+
+	var value int
+
+	err := row.Scan(&value)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 func (c *Client) Close() error {
