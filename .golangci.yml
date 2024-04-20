@@ -3,11 +3,20 @@ linters:
   disable:
   - depguard
   - exhaustruct
-  - paralleltest
   - gomoddirectives
   - lll
-  - revive
+  - paralleltest
   - perfsprint
+  - revive
+  - tagliatelle
+  - varnamelen
+
+  # remove
+  - funlen
+  - cyclop
+  - gocognit
+  - containedctx
+
   # linters deprecated
   - deadcode
   - exhaustivestruct

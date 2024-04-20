@@ -24,6 +24,7 @@ func NewServer(addr string, client *Client) *Server {
 				handleCommand(client, conn, cmd.Args)
 			}, func(conn redcon.Conn) bool {
 				slog.Debug("connection.accept", slog.String("client", conn.RemoteAddr()))
+
 				return true
 			}, func(conn redcon.Conn, err error) {
 				if err != nil {

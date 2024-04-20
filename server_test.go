@@ -79,6 +79,7 @@ func TestCompatibility(t *testing.T) {
 			}
 
 			var actual interface{}
+
 			err = json.Unmarshal(contents, &actual)
 			if err != nil {
 				t.Fatalf("could not unmarshal: %s", err)

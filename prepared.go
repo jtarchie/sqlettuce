@@ -3,6 +3,7 @@ package sqlettus
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 )
 
@@ -16,6 +17,7 @@ func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 	if err != nil {
 		return fmt.Errorf("could not begin transaction: %w", err)
 	}
+
 	defer func() { _ = tx.Rollback() }()
 
 	err = fun(&txExecuter{tx})
@@ -31,12 +33,15 @@ func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 	return nil
 }
 
+var ErrUnsupported = errors.New("PreparedContext unsupported")
+
 func (p *preparedExecuter) PrepareContext(context.Context, string) (*sql.Stmt, error) {
-	return nil, fmt.Errorf("PreparedContext unsupported")
+	return nil, ErrUnsupported
 }
 
 func (p *preparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	if _, ok := p.prepared[query]; !ok {
+		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return nil, fmt.Errorf("could not prepare statement: %w", err)
@@ -45,11 +50,13 @@ func (p *preparedExecuter) ExecContext(ctx context.Context, query string, args .
 		p.prepared[query] = statement
 	}
 
+	//nolint: wrapcheck
 	return p.prepared[query].ExecContext(ctx, args...)
 }
 
 func (p *preparedExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	if _, ok := p.prepared[query]; !ok {
+		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return nil, fmt.Errorf("could not prepare statement: %w", err)
@@ -58,11 +65,13 @@ func (p *preparedExecuter) QueryContext(ctx context.Context, query string, args 
 		p.prepared[query] = statement
 	}
 
+	//nolint: wrapcheck
 	return p.prepared[query].QueryContext(ctx, args...)
 }
 
 func (p *preparedExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	if _, ok := p.prepared[query]; !ok {
+		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return nil
@@ -75,6 +84,11 @@ func (p *preparedExecuter) QueryRowContext(ctx context.Context, query string, ar
 }
 
 func (p *preparedExecuter) Close() error {
+	for _, prepared := range p.prepared {
+		_ = prepared.Close()
+	}
+
+	//nolint: wrapcheck
 	return p.db.Close()
 }
 

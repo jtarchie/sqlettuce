@@ -30,12 +30,14 @@ func handleCommand(
 		err := client.Rename(string(args[1]), string(args[2]))
 		if errors.Is(err, ErrKeyDoesNotExist) {
 			conn.WriteError("key does not exist")
+
 			return
 		}
 
 		if err != nil {
 			slog.Error("rename", slog.String("error", err.Error()))
 			conn.WriteError("could not rename")
+
 			return
 		}
 
@@ -45,39 +47,47 @@ func handleCommand(
 		err := client.RenameIfNotExists(string(args[1]), string(args[2]))
 		if errors.Is(err, ErrKeyAlreadyExists) {
 			conn.WriteInt(0)
+
 			return
 		}
 
 		if err != nil {
 			slog.Error("renamenx", slog.String("error", err.Error()))
 			conn.WriteError("could not renamenx")
+
 			return
 		}
 
 		conn.WriteInt(1)
 	case "del", "unlink":
 		count := 0
+
 		for _, name := range args[1:] {
 			ok, err := client.Delete(string(name))
 			if err != nil {
 				slog.Error("del", slog.String("error", err.Error()))
 			}
+
 			if ok {
 				count++
 			}
 		}
+
 		conn.WriteInt(count)
 	case "exists":
 		count := 0
+
 		for _, name := range args[1:] {
 			ok, err := client.Exists(string(name))
 			if err != nil {
 				slog.Error("del", slog.String("error", err.Error()))
 			}
+
 			if ok {
 				count++
 			}
 		}
+
 		conn.WriteInt(count)
 	case "set":
 		err := client.Set(string(args[1]), string(args[2]), 0)
@@ -89,6 +99,7 @@ func handleCommand(
 		}
 	case "get":
 		name := string(args[1])
+
 		value, err := client.Get(name)
 		if err != nil {
 			slog.Error("get", slog.String("error", err.Error()), slog.String("name", name))
@@ -100,12 +111,14 @@ func handleCommand(
 		name, err := client.RandomKey()
 		if errors.Is(err, ErrKeyDoesNotExist) {
 			conn.WriteNull()
+
 			return
 		}
 
 		if err != nil {
 			slog.Error("randomkey", slog.String("error", err.Error()))
 			conn.WriteError("could not get random key")
+
 			return
 		}
 

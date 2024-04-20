@@ -20,11 +20,11 @@ var (
 var schemaSQL string
 
 type Executer interface {
-	QueryContext(context.Context, string, ...any) (*sql.Rows, error)
-	QueryRowContext(context.Context, string, ...any) *sql.Row
-	ExecContext(context.Context, string, ...any) (sql.Result, error)
-	PrepareContext(context.Context, string) (*sql.Stmt, error)
-	WithTX(context.Context, func(Executer) error) error
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
+	WithTX(ctx context.Context, fun func(Executer) error) error
 	Close() error
 }
 
@@ -57,6 +57,7 @@ func NewClient(ctx context.Context, filename string) (*Client, error) {
 
 func (c *Client) Set(name string, value any, ttl time.Duration) error {
 	now := time.Now()
+
 	var etime *int64
 	if ttl > 0 {
 		etime = new(int64)
@@ -107,6 +108,7 @@ func (c *Client) Get(name string) (string, error) {
 			or etime > :now
 		);
 	`, args...)
+
 	err := row.Err()
 	if err != nil {
 		return "", fmt.Errorf("could not find key: %w", err)
@@ -115,9 +117,10 @@ func (c *Client) Get(name string) (string, error) {
 	var value string
 
 	err = row.Scan(&value)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return "", nil
 	}
+
 	if err != nil {
 		return "", fmt.Errorf("could not read value: %w", err)
 	}
@@ -142,10 +145,11 @@ func (c *Client) Delete(name string) (bool, error) {
 	return true, nil
 }
 
-func (c *Client) Rename(old string, new string) error {
+func (c *Client) Rename(current string, next string) error {
 	err := c.db.WithTX(c.context, func(tx Executer) error {
-		_, _ = tx.ExecContext(c.context, `DELETE FROM keys WHERE name = :new`, sql.Named("new", new))
-		result, err := tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", new), sql.Named("old", old))
+		_, _ = tx.ExecContext(c.context, `DELETE FROM keys WHERE name = :new`, sql.Named("new", next))
+
+		result, err := tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", next), sql.Named("old", current))
 		if err != nil {
 			return fmt.Errorf("could not rename key: %w", err)
 		}
@@ -164,9 +168,9 @@ func (c *Client) Rename(old string, new string) error {
 	return nil
 }
 
-func (c *Client) RenameIfNotExists(old string, new string) error {
+func (c *Client) RenameIfNotExists(current string, next string) error {
 	err := c.db.WithTX(c.context, func(tx Executer) error {
-		row := tx.QueryRowContext(c.context, `SELECT 1 FROM keys WHERE name = :new`, sql.Named("new", new))
+		row := tx.QueryRowContext(c.context, `SELECT 1 FROM keys WHERE name = :new`, sql.Named("new", next))
 		if row.Err() != nil {
 			return fmt.Errorf("could not find new: %w", row.Err())
 		}
@@ -174,8 +178,8 @@ func (c *Client) RenameIfNotExists(old string, new string) error {
 		var value int
 
 		err := row.Scan(&value)
-		if err == sql.ErrNoRows {
-			_, err = tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", new), sql.Named("old", old))
+		if errors.Is(err, sql.ErrNoRows) {
+			_, err = tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", next), sql.Named("old", current))
 			if err != nil {
 				return fmt.Errorf("could not rename key: %w", err)
 			}
@@ -210,7 +214,7 @@ func (c *Client) RandomKey() (string, error) {
 	var name string
 
 	err := row.Scan(&name)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return "", ErrKeyDoesNotExist
 	}
 
@@ -247,7 +251,7 @@ func (c *Client) Exists(name string) (bool, error) {
 	var value int
 
 	err := row.Scan(&value)
-	if err == sql.ErrNoRows {
+	if errors.Is(err, sql.ErrNoRows) {
 		return false, nil
 	}
 
