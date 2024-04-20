@@ -1,15 +1,16 @@
-package sqlettus
+package commands
 
 import (
 	"errors"
 	"log/slog"
 	"strings"
 
+	"github.com/jtarchie/sqlettus/sdk"
 	"github.com/tidwall/redcon"
 )
 
-func handleCommand(
-	client *Client,
+func Handle(
+	client *sdk.Client,
 	conn redcon.Conn,
 	args [][]byte,
 ) {
@@ -28,7 +29,7 @@ func handleCommand(
 		conn.Close()
 	case "rename":
 		err := client.Rename(string(args[1]), string(args[2]))
-		if errors.Is(err, ErrKeyDoesNotExist) {
+		if errors.Is(err, sdk.ErrKeyDoesNotExist) {
 			conn.WriteError("key does not exist")
 
 			return
@@ -45,7 +46,7 @@ func handleCommand(
 
 	case "renamenx":
 		err := client.RenameIfNotExists(string(args[1]), string(args[2]))
-		if errors.Is(err, ErrKeyAlreadyExists) {
+		if errors.Is(err, sdk.ErrKeyAlreadyExists) {
 			conn.WriteInt(0)
 
 			return
@@ -109,7 +110,7 @@ func handleCommand(
 		}
 	case "randomkey":
 		name, err := client.RandomKey()
-		if errors.Is(err, ErrKeyDoesNotExist) {
+		if errors.Is(err, sdk.ErrKeyDoesNotExist) {
 			conn.WriteNull()
 
 			return

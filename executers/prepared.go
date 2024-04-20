@@ -1,4 +1,4 @@
-package sqlettus
+package executers
 
 import (
 	"context"
@@ -7,12 +7,19 @@ import (
 	"fmt"
 )
 
-type preparedExecuter struct {
+type PreparedExecuter struct {
 	db       *sql.DB
 	prepared map[string]*sql.Stmt
 }
 
-func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error) error {
+func NewPrepared(db *sql.DB) *PreparedExecuter {
+	return &PreparedExecuter{
+		db:       db,
+		prepared: map[string]*sql.Stmt{},
+	}
+}
+
+func (p *PreparedExecuter) WithTX(ctx context.Context, fun func(Executer) error) error {
 	tx, err := p.db.BeginTx(ctx, nil)
 	if err != nil {
 		return fmt.Errorf("could not begin transaction: %w", err)
@@ -20,7 +27,7 @@ func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 
 	defer func() { _ = tx.Rollback() }()
 
-	err = fun(&txExecuter{tx})
+	err = fun(&TxExecuter{tx})
 	if err != nil {
 		return fmt.Errorf("could execute within transaction: %w", err)
 	}
@@ -35,11 +42,11 @@ func (p *preparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 
 var ErrUnsupported = errors.New("PreparedContext unsupported")
 
-func (p *preparedExecuter) PrepareContext(context.Context, string) (*sql.Stmt, error) {
+func (p *PreparedExecuter) PrepareContext(context.Context, string) (*sql.Stmt, error) {
 	return nil, ErrUnsupported
 }
 
-func (p *preparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
+func (p *PreparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
 	if _, ok := p.prepared[query]; !ok {
 		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
@@ -54,7 +61,7 @@ func (p *preparedExecuter) ExecContext(ctx context.Context, query string, args .
 	return p.prepared[query].ExecContext(ctx, args...)
 }
 
-func (p *preparedExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
+func (p *PreparedExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
 	if _, ok := p.prepared[query]; !ok {
 		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
@@ -69,7 +76,7 @@ func (p *preparedExecuter) QueryContext(ctx context.Context, query string, args 
 	return p.prepared[query].QueryContext(ctx, args...)
 }
 
-func (p *preparedExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
+func (p *PreparedExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
 	if _, ok := p.prepared[query]; !ok {
 		//nolint: sqlclosecheck
 		statement, err := p.db.PrepareContext(ctx, query)
@@ -83,7 +90,7 @@ func (p *preparedExecuter) QueryRowContext(ctx context.Context, query string, ar
 	return p.prepared[query].QueryRowContext(ctx, args...)
 }
 
-func (p *preparedExecuter) Close() error {
+func (p *PreparedExecuter) Close() error {
 	for _, prepared := range p.prepared {
 		_ = prepared.Close()
 	}
@@ -92,4 +99,4 @@ func (p *preparedExecuter) Close() error {
 	return p.db.Close()
 }
 
-var _ Executer = &preparedExecuter{}
+var _ Executer = &PreparedExecuter{}

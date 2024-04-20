@@ -8,7 +8,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	sqlettus "github.com/jtarchie/sqlettuce"
+	"github.com/jtarchie/sqlettus"
+	"github.com/jtarchie/sqlettus/sdk"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -26,7 +27,7 @@ type Compatibility []struct {
 func TestCompatibility(t *testing.T) {
 	var payload Compatibility
 
-	client, err := sqlettus.NewClient(context.TODO(), ":memory:")
+	client, err := sdk.NewClient(context.TODO(), ":memory:")
 	if err != nil {
 		t.Fatalf("could not create a client: %s", err)
 	}

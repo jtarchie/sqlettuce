@@ -9,7 +9,8 @@ import (
 	"syscall"
 
 	"github.com/alecthomas/kong"
-	sqlettus "github.com/jtarchie/sqlettuce"
+	"github.com/jtarchie/sqlettus"
+	"github.com/jtarchie/sqlettus/sdk"
 )
 
 type cli struct {
@@ -21,7 +22,7 @@ func (c *cli) Run() error {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	client, err := sqlettus.NewClient(ctx, c.Path)
+	client, err := sdk.NewClient(ctx, c.Path)
 	if err != nil {
 		return fmt.Errorf("could not start client: %w", err)
 	}

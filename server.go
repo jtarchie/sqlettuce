@@ -5,23 +5,25 @@ import (
 	"log/slog"
 	"sync"
 
+	"github.com/jtarchie/sqlettus/commands"
+	"github.com/jtarchie/sqlettus/sdk"
 	"github.com/tidwall/redcon"
 )
 
 type Server struct {
 	addr   string
-	client *Client
+	client *sdk.Client
 	wg     *sync.WaitGroup
 	server *redcon.Server
 }
 
-func NewServer(addr string, client *Client) *Server {
+func NewServer(addr string, client *sdk.Client) *Server {
 	return &Server{
 		addr:   addr,
 		client: client,
 		server: redcon.NewServer(addr,
 			func(conn redcon.Conn, cmd redcon.Command) {
-				handleCommand(client, conn, cmd.Args)
+				commands.Handle(client, conn, cmd.Args)
 			}, func(conn redcon.Conn) bool {
 				slog.Debug("connection.accept", slog.String("client", conn.RemoteAddr()))
 

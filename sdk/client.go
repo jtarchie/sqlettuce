@@ -1,4 +1,4 @@
-package sqlettus
+package sdk
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jtarchie/sqlettus/executers"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -19,18 +20,9 @@ var (
 //go:embed schema.sql
 var schemaSQL string
 
-type Executer interface {
-	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
-	QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row
-	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
-	PrepareContext(ctx context.Context, query string) (*sql.Stmt, error)
-	WithTX(ctx context.Context, fun func(Executer) error) error
-	Close() error
-}
-
 type Client struct {
 	context context.Context
-	db      Executer
+	db      executers.Executer
 }
 
 func NewClient(ctx context.Context, filename string) (*Client, error) {
@@ -47,10 +39,7 @@ func NewClient(ctx context.Context, filename string) (*Client, error) {
 	db.SetMaxOpenConns(1)
 
 	return &Client{
-		db: &preparedExecuter{
-			db:       db,
-			prepared: map[string]*sql.Stmt{},
-		},
+		db:      executers.NewPrepared(db),
 		context: ctx,
 	}, nil
 }
@@ -146,7 +135,7 @@ func (c *Client) Delete(name string) (bool, error) {
 }
 
 func (c *Client) Rename(current string, next string) error {
-	err := c.db.WithTX(c.context, func(tx Executer) error {
+	err := c.db.WithTX(c.context, func(tx executers.Executer) error {
 		_, _ = tx.ExecContext(c.context, `DELETE FROM keys WHERE name = :new`, sql.Named("new", next))
 
 		result, err := tx.ExecContext(c.context, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", next), sql.Named("old", current))
@@ -169,7 +158,7 @@ func (c *Client) Rename(current string, next string) error {
 }
 
 func (c *Client) RenameIfNotExists(current string, next string) error {
-	err := c.db.WithTX(c.context, func(tx Executer) error {
+	err := c.db.WithTX(c.context, func(tx executers.Executer) error {
 		row := tx.QueryRowContext(c.context, `SELECT 1 FROM keys WHERE name = :new`, sql.Named("new", next))
 		if row.Err() != nil {
 			return fmt.Errorf("could not find new: %w", row.Err())
