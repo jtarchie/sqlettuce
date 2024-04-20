@@ -58,7 +58,11 @@ func TestCompatibility(t *testing.T) {
 		Protocol: 2,
 	})
 
+	total, failed := 0, 0
+
 	for _, test := range payload {
+		total++
+
 		if test.Skipped || test.Since != "1.0.0" || test.Tags == "cluster" {
 			continue
 		}
@@ -77,7 +81,11 @@ func TestCompatibility(t *testing.T) {
 			result, err := rdb.Do(context.TODO(), args...).Result()
 
 			if err != nil && err.Error() != "redis: nil" {
-				t.Fatalf("could not run command %q: %s", command, err)
+				t.Logf("could not run command %q: %s", command, err)
+
+				failed++
+
+				break
 			}
 
 			contents, err := json.Marshal(result)
@@ -93,8 +101,14 @@ func TestCompatibility(t *testing.T) {
 			}
 
 			if diff := cmp.Diff(test.Result[index], actual); diff != "" {
-				t.Fatalf("%q (-want +got):\n%s", test.Name, diff)
+				t.Logf("%q (-want +got):\n%s", test.Name, diff)
+
+				failed++
 			}
 		}
+	}
+
+	if 0 < failed {
+		t.Fatalf("failed = %d, success = %d", failed, total-failed)
 	}
 }
