@@ -23,20 +23,18 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 		sql.Named("value", value),
 		sql.Named("type", StringType),
 		sql.Named("expires_at", expiresAt),
-		sql.Named("updated_at", now.UnixMilli()),
 	}
 
 	_, err := c.db.ExecContext(ctx, `
 		INSERT INTO
-			keys (name, value, type, expires_at, updated_at)
+			keys (name, value, type, expires_at)
 		values
-			(:name, :value, :type, :expires_at, :updated_at) ON CONFLICT (name) do
+			(:name, :value, :type, :expires_at) ON CONFLICT (name) do
 		UPDATE
 		SET
-			version = version + 1,
 			value = excluded.value,
-			expires_at = excluded.expires_at,
-			updated_at = excluded.updated_at
+			type = excluded.type,
+			expires_at = excluded.expires_at
 	`, args...)
 	if err != nil {
 		return fmt.Errorf("could not set key: %w", err)
