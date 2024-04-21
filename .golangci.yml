@@ -12,13 +12,13 @@ linters:
   - varnamelen
 
   # remove
-  - funlen
   - cyclop
+  - dupl
+  - funlen
   - gocognit
-  - containedctx
   - gomnd
   - nilnil
-  - dupl
+  - thelper
 
   # linters deprecated
   - deadcode
