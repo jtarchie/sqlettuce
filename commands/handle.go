@@ -49,6 +49,8 @@ func Handle(
 		lpop(client, args, conn)
 	case "lpush":
 		lpush(client, args, conn)
+	case "lrange":
+		lrange(client, args, conn)
 	case "mset":
 		mset(client, args, conn)
 	case "pttl":

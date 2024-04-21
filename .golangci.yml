@@ -16,6 +16,7 @@ linters:
   - dupl
   - funlen
   - gocognit
+  - gocyclo
   - gomnd
   - nilnil
   - thelper

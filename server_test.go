@@ -74,23 +74,23 @@ func TestCompatibility(t *testing.T) {
 				result, err := rdb.Do(context.TODO(), args...).Result()
 
 				if err != nil && err.Error() != "redis: nil" {
-					t.Fatalf("command=%q err=%s", command, err)
+					t.Errorf("command=%q err=%s", command, err)
 				}
 
 				contents, err := json.Marshal(result)
 				if err != nil {
-					t.Fatalf("could not marshal: %s", err)
+					t.Errorf("could not marshal: %s", err)
 				}
 
 				var actual interface{}
 
 				err = json.Unmarshal(contents, &actual)
 				if err != nil {
-					t.Fatalf("could not unmarshal: %s", err)
+					t.Errorf("could not unmarshal: %s", err)
 				}
 
 				if diff := cmp.Diff(test.Result[index], actual); diff != "" {
-					t.Fatalf("%q (-want +got):\n%s", command, diff)
+					t.Errorf("%q (-want +got):\n%s", command, diff)
 				}
 			})
 		}
