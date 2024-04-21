@@ -9,4 +9,5 @@ tasks:
     - task: format
     - task: lint
     - go build sqlettus/main.go
+    - go test -bench . -run ^$ -benchmem
     - task: test
