@@ -67,6 +67,8 @@ func Handle(
 		set(client, args, conn)
 	case "sort":
 		sort(client, args, conn)
+	case "substr":
+		substr(client, args, conn)
 	case "ttl":
 		ttl(client, args, conn, time.Second)
 	case "type":
