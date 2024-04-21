@@ -3,7 +3,7 @@ version: '3'
 tasks:
   format: gofmt -w .
   lint: golangci-lint run --fix --timeout "10m"
-  test: go test -race -failfast
+  test: go test -race
   default:
     cmds:
     - task: format

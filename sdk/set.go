@@ -41,6 +41,24 @@ func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Durat
 	return nil
 }
 
+func (c *Client) SetIfNotExists(ctx context.Context, name string, value any) error {
+	_, err := c.db.ExecContext(ctx, `
+		INSERT INTO
+			keys (name, value, type)
+		values
+			(:name, :value, :type);
+	`,
+		sql.Named("name", name),
+		sql.Named("value", value),
+		sql.Named("type", StringType),
+	)
+	if err != nil {
+		return fmt.Errorf("could not set key: %w", err)
+	}
+
+	return nil
+}
+
 func (c *Client) MSet(ctx context.Context, pairs ...[2]string) error {
 	err := c.db.WithTX(ctx, func(tx executers.Executer) error {
 		client := NewClient(tx)

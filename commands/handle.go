@@ -67,6 +67,8 @@ func Handle(
 		rpush(client, args, conn)
 	case "set":
 		set(client, args, conn)
+	case "setnx":
+		setnx(client, args, conn)
 	case "sort":
 		sort(client, args, conn)
 	case "substr":
