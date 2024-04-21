@@ -77,7 +77,7 @@ func TestCompatibility(t *testing.T) {
 			result, err := rdb.Do(context.TODO(), args...).Result()
 
 			if err != nil && err.Error() != "redis: nil" {
-				t.Logf("could not run command %q: %s", command, err)
+				t.Logf("could not run test %q command %q: %s", test.Name, command, err)
 
 				failed++
 
