@@ -5,7 +5,6 @@ import (
 	"context"
 	"database/sql"
 	_ "embed"
-	"errors"
 	"fmt"
 )
 
@@ -48,7 +47,7 @@ func (p *PreparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 
 	defer func() { _ = tx.Rollback() }()
 
-	err = fun(&TxExecuter{tx})
+	err = fun(NewTX(tx))
 	if err != nil {
 		return fmt.Errorf("could execute within transaction: %w", err)
 	}
@@ -61,10 +60,8 @@ func (p *PreparedExecuter) WithTX(ctx context.Context, fun func(Executer) error)
 	return nil
 }
 
-var ErrUnsupported = errors.New("PreparedContext unsupported")
-
-func (p *PreparedExecuter) PrepareContext(context.Context, string) (*sql.Stmt, error) {
-	return nil, ErrUnsupported
+func (p *PreparedExecuter) PrepareContext(ctx context.Context, query string) (*sql.Stmt, error) {
+	return p.db.PrepareContext(ctx, query)
 }
 
 func (p *PreparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
