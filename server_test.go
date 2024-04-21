@@ -54,11 +54,7 @@ func TestCompatibility(t *testing.T) {
 		Protocol: 2,
 	})
 
-	total, failed := 0, 0
-
 	for _, test := range payload {
-		total++
-
 		if test.Skipped || test.Since != "1.0.0" || test.Tags == "cluster" {
 			continue
 		}
@@ -69,42 +65,106 @@ func TestCompatibility(t *testing.T) {
 		}
 
 		for index, command := range test.Command {
-			var args []interface{}
-			for _, arg := range strings.Split(command, " ") {
-				args = append(args, arg)
-			}
+			t.Run(test.Name, func(t *testing.T) {
+				var args []interface{}
+				for _, arg := range strings.Split(command, " ") {
+					args = append(args, arg)
+				}
 
-			result, err := rdb.Do(context.TODO(), args...).Result()
+				result, err := rdb.Do(context.TODO(), args...).Result()
 
-			if err != nil && err.Error() != "redis: nil" {
-				t.Logf("could not run test %q command %q: %s", test.Name, command, err)
+				if err != nil && err.Error() != "redis: nil" {
+					t.Fatalf("command=%q err=%s", command, err)
+				}
 
-				failed++
+				contents, err := json.Marshal(result)
+				if err != nil {
+					t.Fatalf("could not marshal: %s", err)
+				}
 
-				break
-			}
+				var actual interface{}
 
-			contents, err := json.Marshal(result)
-			if err != nil {
-				t.Fatalf("could not marshal: %s", err)
-			}
+				err = json.Unmarshal(contents, &actual)
+				if err != nil {
+					t.Fatalf("could not unmarshal: %s", err)
+				}
 
-			var actual interface{}
-
-			err = json.Unmarshal(contents, &actual)
-			if err != nil {
-				t.Fatalf("could not unmarshal: %s", err)
-			}
-
-			if diff := cmp.Diff(test.Result[index], actual); diff != "" {
-				t.Logf("%q (-want +got):\n%s", test.Name, diff)
-
-				failed++
-			}
+				if diff := cmp.Diff(test.Result[index], actual); diff != "" {
+					t.Fatalf("%q (-want +got):\n%s", command, diff)
+				}
+			})
 		}
 	}
+}
 
-	if 0 < failed {
-		t.Fatalf("failed = %d, success = %d", failed, total-failed)
+func XBenchmarkCompatibility(b *testing.B) {
+	var payload Compatibility
+
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	server := sqlettus.NewServer(":6464", client)
+
+	server.Start()
+	defer server.Close()
+
+	contents, err := os.ReadFile("cts.json")
+	if err != nil {
+		b.Fatalf("could not open cts.json: %s", err)
+	}
+
+	err = json.Unmarshal(contents, &payload)
+	if err != nil {
+		b.Fatalf("could not unmarshal JSON: %s", err)
+	}
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     ":6464",
+		Protocol: 2,
+	})
+
+	for _, test := range payload {
+		if test.Skipped || test.Since != "1.0.0" || test.Tags == "cluster" {
+			continue
+		}
+
+		err = client.FlushDB(context.TODO())
+		if err != nil {
+			b.Fatalf("could not flush db: %s", err)
+		}
+
+		for index, command := range test.Command {
+			b.Run(test.Name, func(b *testing.B) {
+				var args []interface{}
+				for _, arg := range strings.Split(command, " ") {
+					args = append(args, arg)
+				}
+
+				result, err := rdb.Do(context.TODO(), args...).Result()
+
+				if err != nil && err.Error() != "redis: nil" {
+					b.Fatalf("command=%q err=%s", command, err)
+				}
+
+				contents, err := json.Marshal(result)
+				if err != nil {
+					b.Fatalf("could not marshal: %s", err)
+				}
+
+				var actual interface{}
+
+				err = json.Unmarshal(contents, &actual)
+				if err != nil {
+					b.Fatalf("could not unmarshal: %s", err)
+				}
+
+				if diff := cmp.Diff(test.Result[index], actual); diff != "" {
+					b.Fatalf("%q (-want +got):\n%s", command, diff)
+				}
+			})
+		}
 	}
 }
