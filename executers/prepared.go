@@ -24,7 +24,8 @@ func NewPrepared(db *sql.DB) *PreparedExecuter {
 }
 
 func FromDB(filename string) (*PreparedExecuter, error) {
-	db, err := sql.Open("sqlite3", filename)
+	// set config based on: https://github.com/mattn/go-sqlite3/issues/1179#issuecomment-1638083995
+	db, err := sql.Open("sqlite3", filename + "?_tx=immediate")
 	if err != nil {
 		return nil, fmt.Errorf("could open sqlite3: %w", err)
 	}
@@ -35,6 +36,9 @@ func FromDB(filename string) (*PreparedExecuter, error) {
 	}
 
 	db.SetMaxOpenConns(1)
+	db.SetMaxIdleConns(1)
+	db.SetConnMaxLifetime(0)
+	db.SetConnMaxIdleTime(0)
 
 	return NewPrepared(db), nil
 }
