@@ -4,17 +4,19 @@ package executers
 import (
 	"context"
 	"database/sql"
+
+	csmap "github.com/mhmtszr/concurrent-swiss-map"
 )
 
 type TxExecuter struct {
 	tx       *sql.Tx
-	prepared map[string]*sql.Stmt
+	prepared *csmap.CsMap[string, *sql.Stmt]
 }
 
 func NewTX(tx *sql.Tx) *TxExecuter {
 	return &TxExecuter{
 		tx:       tx,
-		prepared: map[string]*sql.Stmt{},
+		prepared: csmap.Create[string, *sql.Stmt](),
 	}
 }
 
@@ -27,48 +29,56 @@ func (t *TxExecuter) PrepareContext(ctx context.Context, query string) (*sql.Stm
 }
 
 func (t *TxExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
-	if _, ok := t.prepared[query]; !ok {
+	if ok := t.prepared.Has(query); !ok {
 		statement, err := t.tx.PrepareContext(ctx, query)
 		if err != nil {
 			return t.tx.ExecContext(ctx, query, args...)
 		}
 
-		t.prepared[query] = statement
+		t.prepared.Store(query, statement)
 	}
 
-	return t.prepared[query].ExecContext(ctx, args...)
+	v, _ := t.prepared.Load(query)
+
+	return v.ExecContext(ctx, args...)
 }
 
 func (t *TxExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
-	if _, ok := t.prepared[query]; !ok {
+	if ok := t.prepared.Has(query); !ok {
 		statement, err := t.tx.PrepareContext(ctx, query)
 		if err != nil {
 			return t.tx.QueryContext(ctx, query, args...)
 		}
 
-		t.prepared[query] = statement
+		t.prepared.Store(query, statement)
 	}
 
-	return t.prepared[query].QueryContext(ctx, args...)
+	v, _ := t.prepared.Load(query)
+
+	return v.QueryContext(ctx, args...)
 }
 
 func (t *TxExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
-	if _, ok := t.prepared[query]; !ok {
+	if ok := t.prepared.Has(query); !ok {
 		statement, err := t.tx.PrepareContext(ctx, query)
 		if err != nil {
 			return t.tx.QueryRowContext(ctx, query, args...)
 		}
 
-		t.prepared[query] = statement
+		t.prepared.Store(query, statement)
 	}
 
-	return t.prepared[query].QueryRowContext(ctx, args...)
+	v, _ := t.prepared.Load(query)
+
+	return v.QueryRowContext(ctx, args...)
 }
 
 func (t *TxExecuter) Close() error {
-	for _, prepared := range t.prepared {
-		_ = prepared.Close()
-	}
+	t.prepared.Range(func(_ string, value *sql.Stmt) bool {
+		_ = value.Close()
+
+		return false
+	})
 
 	return nil
 }

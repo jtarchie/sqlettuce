@@ -20,7 +20,7 @@ func BenchmarkMSet(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			err = client.MSet(context.TODO(), [][2]string{{"a", "1"}, {"b", "2"}}...)
+			_ = client.MSet(context.TODO(), [][2]string{{"a", "1"}, {"b", "2"}}...)
 		}
 	})
 }
@@ -37,7 +37,7 @@ func BenchmarkSet(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			err = client.Set(context.TODO(), "a", "1", 0)
+			_ = client.Set(context.TODO(), "a", "1", 0)
 		}
 	})
 }

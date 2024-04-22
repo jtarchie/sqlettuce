@@ -6,6 +6,8 @@ import (
 	"database/sql"
 	_ "embed"
 	"fmt"
+
+	csmap "github.com/mhmtszr/concurrent-swiss-map"
 )
 
 //go:embed schema.sql
@@ -13,13 +15,13 @@ var schemaSQL string
 
 type PreparedExecuter struct {
 	db       *sql.DB
-	prepared map[string]*sql.Stmt
+	prepared *csmap.CsMap[string, *sql.Stmt]
 }
 
 func NewPrepared(db *sql.DB) *PreparedExecuter {
 	return &PreparedExecuter{
 		db:       db,
-		prepared: map[string]*sql.Stmt{},
+		prepared: csmap.Create[string, *sql.Stmt](),
 	}
 }
 
@@ -69,48 +71,56 @@ func (p *PreparedExecuter) PrepareContext(ctx context.Context, query string) (*s
 }
 
 func (p *PreparedExecuter) ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error) {
-	if _, ok := p.prepared[query]; !ok {
+	if ok := p.prepared.Has(query); !ok {
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return p.db.ExecContext(ctx, query, args...)
 		}
 
-		p.prepared[query] = statement
+		p.prepared.Store(query, statement)
 	}
 
-	return p.prepared[query].ExecContext(ctx, args...)
+	v, _ := p.prepared.Load(query)
+
+	return v.ExecContext(ctx, args...)
 }
 
 func (p *PreparedExecuter) QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error) {
-	if _, ok := p.prepared[query]; !ok {
+	if ok := p.prepared.Has(query); !ok {
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return p.db.QueryContext(ctx, query, args...)
 		}
 
-		p.prepared[query] = statement
+		p.prepared.Store(query, statement)
 	}
 
-	return p.prepared[query].QueryContext(ctx, args...)
+	v, _ := p.prepared.Load(query)
+
+	return v.QueryContext(ctx, args...)
 }
 
 func (p *PreparedExecuter) QueryRowContext(ctx context.Context, query string, args ...any) *sql.Row {
-	if _, ok := p.prepared[query]; !ok {
+	if ok := p.prepared.Has(query); !ok {
 		statement, err := p.db.PrepareContext(ctx, query)
 		if err != nil {
 			return p.db.QueryRowContext(ctx, query, args...)
 		}
 
-		p.prepared[query] = statement
+		p.prepared.Store(query, statement)
 	}
 
-	return p.prepared[query].QueryRowContext(ctx, args...)
+	v, _ := p.prepared.Load(query)
+
+	return v.QueryRowContext(ctx, args...)
 }
 
 func (p *PreparedExecuter) Close() error {
-	for _, prepared := range p.prepared {
-		_ = prepared.Close()
-	}
+	p.prepared.Range(func(_ string, value *sql.Stmt) bool {
+		_ = value.Close()
+
+		return false
+	})
 
 	return p.db.Close()
 }
