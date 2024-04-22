@@ -95,6 +95,8 @@ func Handle(
 		smembers(client, args, conn)
 	case "srem":
 		srem(client, args, conn)
+	case "smove":
+		smove(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":
