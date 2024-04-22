@@ -73,6 +73,8 @@ func Handle(
 		rpop(client, args, conn)
 	case "rpush":
 		rpush(client, args, conn)
+	case "sadd":
+		sadd(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":

@@ -17,8 +17,8 @@ func rpop(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 	}
 
 	name := string(args[1])
-
 	count := int64(1)
+
 	if len(args) == 3 {
 		var err error
 
@@ -35,12 +35,12 @@ func rpop(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 		slog.Error("get", slog.String("error", err.Error()), slog.String("name", name))
 		conn.WriteError("could not rpop the key")
 	} else {
-		if len(values) == 0 {
+		switch {
+		case len(values) == 0:
 			conn.WriteNull()
-		} else if len(values) == 1 {
+		case len(values) == 1:
 			conn.WriteBulkString(values[0])
-		} else {
-
+		default:
 			conn.WriteArray(len(values))
 
 			for _, value := range values {
