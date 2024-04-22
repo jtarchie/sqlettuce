@@ -25,7 +25,7 @@ func (c *Client) ListRange(ctx context.Context, name string, start int64, end in
 		sql.Named("end", end),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("could not glob names: %w", err)
+		return nil, fmt.Errorf("could not get values: %w", err)
 	}
 
 	defer rows.Close()
