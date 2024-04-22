@@ -18,7 +18,7 @@ func (c *Client) ListShift(ctx context.Context, name string, length int64) ([]st
 
 			err := sqlscan.Get(ctx, tx, &value, `
 			SELECT
-				json_extract(value, '$[0]')
+				jsonb_extract(payload, '$[0]')
 			FROM
 				active_keys keys
 			WHERE
@@ -37,7 +37,7 @@ func (c *Client) ListShift(ctx context.Context, name string, length int64) ([]st
 			UPDATE
 				keys
 			SET
-				value = json_remove(value, '$[0]')
+				payload = jsonb_remove(payload, '$[0]')
 			WHERE
 				name = :name AND type = :type
 			`,

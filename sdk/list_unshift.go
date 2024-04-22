@@ -23,9 +23,9 @@ func (c *Client) ListUnshift(ctx context.Context, name string, values ...string)
 		if !found {
 			_, err := tx.ExecContext(ctx, `
 			INSERT INTO
-				keys (name, value, type)
+				keys (name, payload, type)
 			values
-				(:name, '[]', :type);
+				(:name, jsonb_array(), :type);
 			`,
 
 				sql.Named("name", name),
@@ -41,13 +41,13 @@ func (c *Client) ListUnshift(ctx context.Context, name string, values ...string)
 			UPDATE
 				keys
 			SET
-				value = (
+			payload = (
 					SELECT
-						json_group_array(value)
+						jsonb_group_array(value)
 					FROM (
-						SELECT json_each.value AS value FROM json_each(json_array(:value))
+						SELECT json_each.value AS value FROM json_each(jsonb_array(:value))
 						UNION ALL
-						SELECT json_each.value AS value FROM json_each(keys.value)
+						SELECT json_each.value AS value FROM json_each(keys.payload)
 					)
 				)
 			WHERE
@@ -63,7 +63,7 @@ func (c *Client) ListUnshift(ctx context.Context, name string, values ...string)
 		}
 
 		err = sqlscan.Get(ctx, tx, &length,
-			`SELECT json_array_length(value) FROM active_keys WHERE name = :name`,
+			`SELECT json_array_length(payload) FROM active_keys WHERE name = :name`,
 			sql.Named("name", name),
 		)
 		if err != nil {

@@ -16,7 +16,7 @@ func (c *Client) ListSort(ctx context.Context, name string) ([]string, error) {
 			json_each.value
 		FROM
 			active_keys keys,
-			json_each(keys.value)
+			json_each(keys.payload)
 		WHERE
 			keys.name = :name AND
 			keys.type = :type
@@ -27,7 +27,7 @@ func (c *Client) ListSort(ctx context.Context, name string) ([]string, error) {
 		sql.Named("type", ListType),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("could sort values: %w", err)
+		return nil, fmt.Errorf("could not sort values: %w", err)
 	}
 
 	return values, nil

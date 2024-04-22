@@ -16,12 +16,12 @@ func (c *Client) ListRange(ctx context.Context, name string, start int64, end in
 		json_each.value
 	FROM
 		active_keys keys,
-		json_each(keys.value)
+		json_each(keys.payload)
 	WHERE
 		keys.name = :name AND
 		keys.type = :type AND
-		json_each.key >= IIF(:start >=0, :start, json_array_length(keys.value) + :start) AND
-		json_each.key <= IIF(:end >=0, :end, json_array_length(keys.value) + :end);
+		json_each.key >= IIF(:start >=0, :start, json_array_length(keys.payload) + :start) AND
+		json_each.key <= IIF(:end >=0, :end, json_array_length(keys.payload) + :end);
 	`,
 		sql.Named("name", name),
 		sql.Named("type", ListType),

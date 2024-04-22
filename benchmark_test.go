@@ -274,6 +274,24 @@ func BenchmarkListShift(b *testing.B) {
 	})
 }
 
+func BenchmarkListSort(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.ListPush(context.TODO(), "a", "1", "4", "3", "2")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.ListSort(context.TODO(), "a")
+		}
+	})
+}
+
 func BenchmarkListUnshift(b *testing.B) {
 	db, err := executers.FromDB(":memory:")
 	if err != nil {
@@ -341,24 +359,6 @@ func BenchmarkSet(b *testing.B) {
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
 			_ = client.Set(context.TODO(), "a", "1", 0)
-		}
-	})
-}
-
-func BenchmarkListSort(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
-	if err != nil {
-		b.Fatalf("could not start db: %s", err)
-	}
-
-	client := sdk.NewClient(db)
-	_, _ = client.ListPush(context.TODO(), "a", "1", "4", "3", "2")
-
-	b.ResetTimer()
-
-	b.RunParallel(func(pb *testing.PB) {
-		for pb.Next() {
-			_, _ = client.ListSort(context.TODO(), "a")
 		}
 	})
 }

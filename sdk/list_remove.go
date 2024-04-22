@@ -30,7 +30,7 @@ func (c *Client) ListRemove(ctx context.Context, name string, count int64, eleme
 			json_each.key AS pos
 		FROM
 			active_keys keys,
-			json_each(keys.value)
+			json_each(keys.payload)
 		WHERE
 			keys.name = :name
 			AND keys.type = :type
@@ -54,7 +54,7 @@ func (c *Client) ListRemove(ctx context.Context, name string, count int64, eleme
 			UPDATE
 				keys
 			SET
-				value = json_remove(value, '$[' || :position || ']')
+				payload = json_remove(payload, '$[' || :position || ']')
 			WHERE
 				keys.name = :name AND
 				keys.type = :type

@@ -13,7 +13,7 @@ func (c *Client) ListLength(ctx context.Context, name string) (int64, error) {
 
 	err := sqlscan.Get(ctx, c.db, &length, `
 		SELECT
-			json_array_length(value)
+			json_array_length(payload)
 		FROM
 			active_keys keys
 		WHERE

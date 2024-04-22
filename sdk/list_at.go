@@ -13,7 +13,7 @@ func (c *Client) ListAt(ctx context.Context, name string, index int64) (string, 
 
 	err := sqlscan.Get(ctx, c.db, &value, `
 		SELECT
-			json_extract(value, '$[#' || :index || ']')
+			json_extract(payload, '$[#' || :index || ']')
 		FROM
 			active_keys keys
 		WHERE

@@ -23,9 +23,9 @@ func (c *Client) ListPush(ctx context.Context, name string, values ...string) (i
 		if !found {
 			_, err := tx.ExecContext(ctx, `
 			INSERT INTO
-				keys (name, value, type)
+				keys (name, payload, type)
 			values
-				(:name, '[]', :type);
+				(:name, jsonb_array(), :type);
 			`,
 
 				sql.Named("name", name),
@@ -41,21 +41,22 @@ func (c *Client) ListPush(ctx context.Context, name string, values ...string) (i
 			UPDATE
 				keys
 			SET
-				value = json_insert(value, '$[#]', :value)
+				payload = jsonb_insert(payload, '$[#]', :value)
 			WHERE
-				name = :name AND type = :type
+				name = :name AND
+				type = :type
 		`,
 				sql.Named("name", name),
 				sql.Named("type", ListType),
 				sql.Named("value", value),
 			)
 			if err != nil {
-				return fmt.Errorf("could not set key: %w", err)
+				return fmt.Errorf("could not set value: %w", err)
 			}
 		}
 
 		err = sqlscan.Get(ctx, tx, &length, `
-			SELECT json_array_length(value) FROM active_keys WHERE name = :name
+			SELECT json_array_length(payload) FROM active_keys WHERE name = :name
 		`,
 			sql.Named("name", name),
 		)
