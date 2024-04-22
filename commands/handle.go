@@ -85,6 +85,8 @@ func Handle(
 		sinter(client, args, conn)
 	case "sinterstore":
 		sinterstore(client, args, conn)
+	case "sismember":
+		sismember(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":
