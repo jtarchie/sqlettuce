@@ -9,7 +9,7 @@ import (
 )
 
 func sdiff(client *sdk.Client, args [][]byte, conn redcon.Conn) {
-	if len(args) < 3 {
+	if len(args) < 2 {
 		conn.WriteError("not enough arguments")
 
 		return
