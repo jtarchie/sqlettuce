@@ -69,6 +69,8 @@ func Handle(
 		rename(client, args, conn)
 	case "renamenx":
 		renamenx(client, args, conn)
+	case "rpop":
+		rpop(client, args, conn)
 	case "rpush":
 		rpush(client, args, conn)
 	case "set":
