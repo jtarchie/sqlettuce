@@ -53,6 +53,8 @@ func Handle(
 		lrange(client, args, conn)
 	case "lrem":
 		lrem(client, args, conn)
+	case "lset":
+		lset(client, args, conn)
 	case "mset":
 		mset(client, args, conn)
 	case "pttl":

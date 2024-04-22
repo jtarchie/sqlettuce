@@ -376,7 +376,7 @@ func BenchmarkSubstr(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_ , _= client.Substr(context.TODO(), "a", 0, 4)
+			_, _ = client.Substr(context.TODO(), "a", 0, 4)
 		}
 	})
 }
@@ -394,7 +394,7 @@ func BenchmarkTTL(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_ , _= client.TTL(context.TODO(), "a")
+			_, _ = client.TTL(context.TODO(), "a")
 		}
 	})
 }
@@ -412,7 +412,7 @@ func BenchmarkType(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_ , _= client.Type(context.TODO(), "a")
+			_, _ = client.Type(context.TODO(), "a")
 		}
 	})
 }
