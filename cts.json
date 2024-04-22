@@ -2173,11 +2173,13 @@
     "name": "spop command",
     "command": [
       "sadd myset 0",
-      "spop myset"
+      "spop myset",
+      "smembers myset"
     ],
     "result": [
       1,
-      "0"
+      "0",
+      null
     ],
     "since": "1.0.0"
   },
