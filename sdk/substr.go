@@ -5,10 +5,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) Substr(ctx context.Context, name string, start int64, end int64) (string, error) {
-	row := c.db.QueryRowContext(ctx, `
+	var value string
+
+	err := sqlscan.Get(ctx, c.db, &value, `
 	SELECT SUBSTR(
     value,
     IIF(:start < 0, :start, :start + 1),
@@ -30,20 +34,12 @@ func (c *Client) Substr(ctx context.Context, name string, start int64, end int64
 		sql.Named("end", end),
 	)
 
-	err := row.Err()
-	if err != nil {
-		return "", fmt.Errorf("could not find key: %w", err)
-	}
-
-	var value string
-
-	err = row.Scan(&value)
 	if errors.Is(err, sql.ErrNoRows) {
 		return "", nil
 	}
 
 	if err != nil {
-		return "", fmt.Errorf("could not read value: %w", err)
+		return "", fmt.Errorf("could not find key: %w", err)
 	}
 
 	return value, nil

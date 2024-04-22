@@ -4,10 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) ListAt(ctx context.Context, name string, index int64) (string, error) {
-	row := c.db.QueryRowContext(ctx, `
+	var value string
+
+	err := sqlscan.Get(ctx, c.db, &value, `
 		SELECT
 			json_extract(value, '$[#' || :index || ']')
 		FROM
@@ -20,17 +24,8 @@ func (c *Client) ListAt(ctx context.Context, name string, index int64) (string, 
 		sql.Named("index", index),
 		sql.Named("type", ListType),
 	)
-
-	err := row.Err()
 	if err != nil {
 		return "", fmt.Errorf("could not extract value: %w", err)
-	}
-
-	var value string
-
-	err = row.Scan(&value)
-	if err != nil {
-		return "", fmt.Errorf("could not scan value: %w", err)
 	}
 
 	return value, nil

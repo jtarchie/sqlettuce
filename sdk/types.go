@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 type Type int
@@ -26,20 +28,19 @@ func (t Type) String() string {
 }
 
 func (c *Client) Type(ctx context.Context, name string) (Type, error) {
-	row := c.db.QueryRowContext(
-		ctx,
+	var value Type
+
+	err := sqlscan.Get(ctx, c.db, &value,
 		`SELECT type FROM active_keys WHERE name = :name`,
 		sql.Named("name", name),
 	)
-	if row.Err() != nil {
-		return 0, fmt.Errorf("could not read key: %w", row.Err())
-	}
 
-	var value Type
-
-	err := row.Scan(&value)
 	if errors.Is(err, sql.ErrNoRows) {
 		return 0, ErrKeyDoesNotExist
+	}
+
+	if err != nil {
+		return 0, fmt.Errorf("could not read key: %w", err)
 	}
 
 	return value, nil

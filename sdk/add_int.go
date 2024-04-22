@@ -4,10 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) AddInt(ctx context.Context, name string, add int64) (int64, error) {
-	row := c.db.QueryRowContext(ctx, `
+	var value int64
+
+	err := sqlscan.Get(ctx, c.db, &value, `
 		INSERT INTO
 			keys (name, value, type)
 		VALUES
@@ -25,17 +29,8 @@ func (c *Client) AddInt(ctx context.Context, name string, add int64) (int64, err
 		sql.Named("value", add),
 		sql.Named("type", StringType),
 	)
-
-	err := row.Err()
 	if err != nil {
 		return 0, fmt.Errorf("could not set integer: %w", err)
-	}
-
-	var value int64
-
-	err = row.Scan(&value)
-	if err != nil {
-		return 0, fmt.Errorf("could not scan: %w", err)
 	}
 
 	return value, nil

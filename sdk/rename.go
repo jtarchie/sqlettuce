@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/georgysavva/scany/v2/sqlscan"
 	"github.com/jtarchie/sqlettus/executers"
 )
 
@@ -34,14 +35,13 @@ func (c *Client) Rename(ctx context.Context, current string, next string) error 
 
 func (c *Client) RenameIfNotExists(ctx context.Context, current string, next string) error {
 	err := c.db.WithTX(ctx, func(tx executers.Executer) error {
-		row := tx.QueryRowContext(ctx, `SELECT 1 FROM keys WHERE name = :new`, sql.Named("new", next))
-		if row.Err() != nil {
-			return fmt.Errorf("could not find new: %w", row.Err())
-		}
-
 		var value int
 
-		err := row.Scan(&value)
+		err := sqlscan.Get(ctx, tx, &value,
+			`SELECT 1 FROM keys WHERE name = :new`,
+			sql.Named("new", next),
+		)
+
 		if errors.Is(err, sql.ErrNoRows) {
 			_, err = tx.ExecContext(ctx, `UPDATE keys SET name = :new WHERE name = :old`, sql.Named("new", next), sql.Named("old", current))
 			if err != nil {
@@ -50,7 +50,7 @@ func (c *Client) RenameIfNotExists(ctx context.Context, current string, next str
 		}
 
 		if err != nil {
-			return fmt.Errorf("could not scan: %w", err)
+			return fmt.Errorf("could not find new: %w", err)
 		}
 
 		if value == 1 {

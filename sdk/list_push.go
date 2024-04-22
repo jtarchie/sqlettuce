@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/georgysavva/scany/v2/sqlscan"
 	"github.com/jtarchie/sqlettus/executers"
 )
 
@@ -53,13 +54,11 @@ func (c *Client) ListPush(ctx context.Context, name string, values ...string) (i
 			}
 		}
 
-		row := tx.QueryRowContext(
-			ctx,
-			`SELECT json_array_length(value) FROM active_keys WHERE name = :name`,
+		err = sqlscan.Get(ctx, tx, &length, `
+			SELECT json_array_length(value) FROM active_keys WHERE name = :name
+		`,
 			sql.Named("name", name),
 		)
-
-		err = row.Scan(&length)
 		if err != nil {
 			return fmt.Errorf("could not determine list length: %w", err)
 		}

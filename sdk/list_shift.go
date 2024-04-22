@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/georgysavva/scany/v2/sqlscan"
 	"github.com/jtarchie/sqlettus/executers"
 )
 
@@ -13,7 +14,9 @@ func (c *Client) ListShift(ctx context.Context, name string, length int64) ([]st
 
 	err := c.db.WithTX(ctx, func(tx executers.Executer) error {
 		for range length {
-			row := tx.QueryRowContext(ctx, `
+			var value string
+
+			err := sqlscan.Get(ctx, tx, &value, `
 			SELECT
 				json_extract(value, '$[0]')
 			FROM
@@ -24,17 +27,8 @@ func (c *Client) ListShift(ctx context.Context, name string, length int64) ([]st
 				sql.Named("name", name),
 				sql.Named("type", ListType),
 			)
-
-			err := row.Err()
 			if err != nil {
 				return fmt.Errorf("could not pop value: %w", err)
-			}
-
-			var value string
-
-			err = row.Scan(&value)
-			if err != nil {
-				return fmt.Errorf("could not scan value: %w", err)
 			}
 
 			values = append(values, value)

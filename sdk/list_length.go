@@ -4,10 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) ListLength(ctx context.Context, name string) (int64, error) {
-	row := c.db.QueryRowContext(ctx, `
+	var length int64
+
+	err := sqlscan.Get(ctx, c.db, &length, `
 		SELECT
 			json_array_length(value)
 		FROM
@@ -19,17 +23,8 @@ func (c *Client) ListLength(ctx context.Context, name string) (int64, error) {
 		sql.Named("name", name),
 		sql.Named("type", ListType),
 	)
-
-	err := row.Err()
 	if err != nil {
 		return 0, fmt.Errorf("could not read list length: %w", err)
-	}
-
-	var length int64
-
-	err = row.Scan(&length)
-	if err != nil {
-		return 0, fmt.Errorf("could not scan: %w", err)
 	}
 
 	return length, nil

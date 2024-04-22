@@ -6,10 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) TTL(ctx context.Context, name string) (*time.Duration, error) {
-	row := c.db.QueryRowContext(ctx, `
+	var value sql.NullInt64
+
+	err := sqlscan.Get(ctx, c.db, &value, `
 	select
 		expires_at
 	from
@@ -20,20 +24,12 @@ func (c *Client) TTL(ctx context.Context, name string) (*time.Duration, error) {
 		sql.Named("name", name),
 	)
 
-	err := row.Err()
-	if err != nil {
-		return nil, fmt.Errorf("could not find key: %w", err)
-	}
-
-	var value sql.NullInt64
-
-	err = row.Scan(&value)
 	if errors.Is(err, sql.ErrNoRows) {
 		return nil, ErrKeyDoesNotExist
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("could not read value: %w", err)
+		return nil, fmt.Errorf("could not find key: %w", err)
 	}
 
 	if !value.Valid {
