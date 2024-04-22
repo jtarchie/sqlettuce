@@ -81,6 +81,10 @@ func Handle(
 		sdiff(client, args, conn)
 	case "sdiffstore":
 		sdiffstore(client, args, conn)
+	case "sinter":
+		sinter(client, args, conn)
+	case "sinterstore":
+		sinterstore(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":
