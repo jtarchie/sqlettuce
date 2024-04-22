@@ -77,6 +77,8 @@ func Handle(
 		sadd(client, args, conn)
 	case "scard":
 		scard(client, args, conn)
+	case "sdiff":
+		sdiff(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":
