@@ -28,7 +28,7 @@ func (c *Client) SetAdd(ctx context.Context, name string, values ...string) (int
 			`,
 
 				sql.Named("name", name),
-				sql.Named("type", ListType),
+				sql.Named("type", SetType),
 			)
 			if err != nil {
 				return fmt.Errorf("could not set key: %w", err)
@@ -47,7 +47,7 @@ func (c *Client) SetAdd(ctx context.Context, name string, values ...string) (int
 				jsonb_extract(payload, '$.' || :value) IS NULL
 		`,
 				sql.Named("name", name),
-				sql.Named("type", ListType),
+				sql.Named("type", SetType),
 				sql.Named("value", value),
 			)
 			if err != nil {

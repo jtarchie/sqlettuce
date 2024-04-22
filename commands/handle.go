@@ -75,6 +75,8 @@ func Handle(
 		rpush(client, args, conn)
 	case "sadd":
 		sadd(client, args, conn)
+	case "scard":
+		scard(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":

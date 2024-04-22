@@ -14,6 +14,7 @@ type Type int
 const (
 	StringType Type = Type(1)
 	ListType   Type = Type(2)
+	SetType    Type = Type(3)
 )
 
 func (t Type) String() string {
@@ -22,6 +23,8 @@ func (t Type) String() string {
 		return "string"
 	case ListType:
 		return "list"
+	case SetType:
+		return "set"
 	default:
 		return "unknown"
 	}
