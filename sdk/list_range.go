@@ -4,10 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) ListRange(ctx context.Context, name string, start int64, end int64) ([]string, error) {
-	rows, err := c.db.QueryContext(ctx, `
+	var values []string
+
+	err := sqlscan.Select(ctx, c.db, &values, `
 	SELECT
 		json_each.value
 	FROM
@@ -26,25 +30,6 @@ func (c *Client) ListRange(ctx context.Context, name string, start int64, end in
 	)
 	if err != nil {
 		return nil, fmt.Errorf("could not get values: %w", err)
-	}
-
-	defer rows.Close()
-
-	var values []string
-
-	for rows.Next() {
-		var name string
-
-		err := rows.Scan(&name)
-		if err != nil {
-			return nil, fmt.Errorf("could not scan value: %w", err)
-		}
-
-		values = append(values, name)
-	}
-
-	if rows.Err() != nil {
-		return nil, fmt.Errorf("could not scan rows: %w", rows.Err())
 	}
 
 	return values, nil

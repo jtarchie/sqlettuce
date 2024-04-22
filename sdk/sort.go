@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) Sort(ctx context.Context, name string) ([]string, error) {
 	var values []string
 
-	rows, err := c.db.QueryContext(ctx, `
+	err := sqlscan.Select(ctx, c.db, &values, `
 		SELECT
 			json_each.value
 		FROM
@@ -25,23 +27,7 @@ func (c *Client) Sort(ctx context.Context, name string) ([]string, error) {
 		sql.Named("type", ListType),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("could not query for sorted values: %w", err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var value string
-
-		err := rows.Scan(&value)
-		if err != nil {
-			return nil, fmt.Errorf("could not scan for sorted values: %w", err)
-		}
-
-		values = append(values, value)
-	}
-
-	if rows.Err() != nil {
-		return nil, fmt.Errorf("could not scan rows: %w", rows.Err())
+		return nil, fmt.Errorf("could sort values: %w", err)
 	}
 
 	return values, nil

@@ -4,10 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) Keys(ctx context.Context, glob string) ([]string, error) {
-	rows, err := c.db.QueryContext(ctx, `
+	var names []string
+
+	err := sqlscan.Select(ctx, c.db, &names, `
 	select
 		name
 	from
@@ -19,25 +23,6 @@ func (c *Client) Keys(ctx context.Context, glob string) ([]string, error) {
 	)
 	if err != nil {
 		return nil, fmt.Errorf("could not glob names: %w", err)
-	}
-
-	defer rows.Close()
-
-	var names []string
-
-	for rows.Next() {
-		var name string
-
-		err := rows.Scan(&name)
-		if err != nil {
-			return nil, fmt.Errorf("could not scan name: %w", err)
-		}
-
-		names = append(names, name)
-	}
-
-	if rows.Err() != nil {
-		return nil, fmt.Errorf("could not scan rows: %w", rows.Err())
 	}
 
 	return names, nil

@@ -5,10 +5,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
+	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
 func (c *Client) Get(ctx context.Context, name string) (string, error) {
-	row := c.db.QueryRowContext(ctx, `
+	var value string
+
+	err := sqlscan.Get(ctx, c.db, &value, `
 	SELECT
 		value
 	FROM
@@ -21,14 +25,6 @@ func (c *Client) Get(ctx context.Context, name string) (string, error) {
 		sql.Named("type", StringType),
 	)
 
-	err := row.Err()
-	if err != nil {
-		return "", fmt.Errorf("could not find key: %w", err)
-	}
-
-	var value string
-
-	err = row.Scan(&value)
 	if errors.Is(err, sql.ErrNoRows) {
 		return "", nil
 	}

@@ -12,10 +12,12 @@ import (
 
 func (c *Client) ListRemove(ctx context.Context, name string, count int64, element string) (int64, error) {
 	orderBy := "ASC"
+
 	if 0 > count {
 		orderBy = "DESC"
 		count = -count
 	}
+
 	if count == 0 {
 		count = math.MaxInt64
 	}
