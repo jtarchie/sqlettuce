@@ -93,6 +93,8 @@ func Handle(
 		sismember(client, args, conn)
 	case "smembers":
 		smembers(client, args, conn)
+	case "srem":
+		srem(client, args, conn)
 	case "set":
 		set(client, args, conn)
 	case "setnx":
