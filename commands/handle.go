@@ -55,6 +55,8 @@ func Handle(
 		lrem(client, args, conn)
 	case "lset":
 		lset(client, args, conn)
+	case "ltrim":
+		ltrim(client, args, conn)
 	case "mset":
 		mset(client, args, conn)
 	case "pttl":
