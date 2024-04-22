@@ -8,7 +8,7 @@ import (
 	"github.com/georgysavva/scany/v2/sqlscan"
 )
 
-func (c *Client) Sort(ctx context.Context, name string) ([]string, error) {
+func (c *Client) ListSort(ctx context.Context, name string) ([]string, error) {
 	var values []string
 
 	err := sqlscan.Select(ctx, c.db, &values, `

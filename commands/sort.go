@@ -11,7 +11,7 @@ import (
 func sort(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 	name := string(args[1])
 
-	values, err := client.Sort(context.TODO(), name)
+	values, err := client.ListSort(context.TODO(), name)
 	if err != nil {
 		slog.Error("sort", slog.String("error", err.Error()))
 		conn.WriteError("could not sort elements")

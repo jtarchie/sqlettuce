@@ -345,7 +345,7 @@ func BenchmarkSet(b *testing.B) {
 	})
 }
 
-func BenchmarkSort(b *testing.B) {
+func BenchmarkListSort(b *testing.B) {
 	db, err := executers.FromDB(":memory:")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
@@ -358,7 +358,7 @@ func BenchmarkSort(b *testing.B) {
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
-			_, _ = client.Sort(context.TODO(), "a")
+			_, _ = client.ListSort(context.TODO(), "a")
 		}
 	})
 }
