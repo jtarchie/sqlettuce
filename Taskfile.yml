@@ -4,10 +4,11 @@ tasks:
   format: gofmt -w .
   lint: golangci-lint run --fix --timeout "10m"
   test: go test -race -failfast
+  bench: go test -bench . -run ^$ -benchmem
   default:
     cmds:
     - task: format
     - task: lint
     - go build sqlettus/main.go
-    - go test -bench . -run ^$ -benchmem
+    - task: bench
     - task: test
