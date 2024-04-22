@@ -16,6 +16,10 @@ func get(client *sdk.Client, args [][]byte, conn redcon.Conn) {
 		slog.Error("get", slog.String("error", err.Error()), slog.String("name", name))
 		conn.WriteError("could not get the key")
 	} else {
-		conn.WriteBulkString(value)
+		if value == nil {
+			conn.WriteNull()
+		} else {
+			conn.WriteBulkString(*value)
+		}
 	}
 }

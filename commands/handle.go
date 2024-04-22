@@ -35,6 +35,8 @@ func Handle(
 		flush(client, args, conn)
 	case "get":
 		get(client, args, conn)
+	case "getset":
+		getset(client, args, conn)
 	case "keys":
 		keys(client, args, conn)
 	case "incr":
@@ -57,6 +59,8 @@ func Handle(
 		lset(client, args, conn)
 	case "ltrim":
 		ltrim(client, args, conn)
+	case "mget":
+		mget(client, args, conn)
 	case "mset":
 		mset(client, args, conn)
 	case "pttl":
