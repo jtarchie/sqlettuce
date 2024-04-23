@@ -346,6 +346,264 @@ func BenchmarkRename(b *testing.B) {
 	})
 }
 
+func BenchmarkSetAdd(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetAdd(context.TODO(), "a", "b")
+		}
+	})
+}
+
+func BenchmarkSetContains(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "b")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetContains(context.TODO(), "a", "b")
+		}
+	})
+}
+
+func BenchmarkSetDiff(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetDiff(context.TODO(), "a", "b")
+		}
+	})
+}
+
+func BenchmarkSetDiffAndStore(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetDiffAndStore(context.TODO(), "c", "a", "b")
+		}
+	})
+}
+
+func BenchmarkIntersectDiff(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetIntersect(context.TODO(), "a", "b")
+		}
+	})
+}
+
+func BenchmarkSetIntersectAndStore(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetIntersectAndStore(context.TODO(), "c", "a", "b")
+		}
+	})
+}
+
+func BenchmarkSetLength(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetLength(context.TODO(), "a")
+		}
+	})
+}
+
+func BenchmarkSetMembers(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetMembers(context.TODO(), "a")
+		}
+	})
+}
+
+func BenchmarkSetMove(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_ = client.SetMove(context.TODO(), "b", "a", "1")
+		}
+	})
+}
+
+func BenchmarkSetPop(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetPop(context.TODO(), "a", 1)
+		}
+	})
+}
+
+func BenchmarkRandomMember(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetRandomMember(context.TODO(), "a", 1)
+		}
+	})
+}
+
+func BenchmarkSetRemove(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetRemove(context.TODO(), "a", "2")
+		}
+	})
+}
+
+func BenchmarkSetUnion(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetUnion(context.TODO(), "a", "b")
+		}
+	})
+}
+
+func BenchmarkSetUnionAndStore(b *testing.B) {
+	db, err := executers.FromDB(":memory:")
+	if err != nil {
+		b.Fatalf("could not start db: %s", err)
+	}
+
+	client := sdk.NewClient(db)
+	_, _ = client.SetAdd(context.TODO(), "a", "1", "2", "3")
+	_, _ = client.SetAdd(context.TODO(), "b", "2", "3")
+
+	b.ResetTimer()
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			_, _ = client.SetUnionAndStore(context.TODO(), "c", "a", "b")
+		}
+	})
+}
+
 func BenchmarkSet(b *testing.B) {
 	db, err := executers.FromDB(":memory:")
 	if err != nil {
