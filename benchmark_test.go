@@ -1,12 +1,12 @@
-package sqlettus_test
+package sqlettuce_test
 
 import (
 	"context"
 	"testing"
 	"time"
 
-	"github.com/jtarchie/sqlettus/executers"
-	"github.com/jtarchie/sqlettus/sdk"
+	"github.com/jtarchie/sqlettuce/executers"
+	"github.com/jtarchie/sqlettuce/sdk"
 )
 
 func BenchmarkAddInt(b *testing.B) {

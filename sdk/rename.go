@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/georgysavva/scany/v2/sqlscan"
-	"github.com/jtarchie/sqlettus/executers"
+	"github.com/jtarchie/sqlettuce/executers"
 )
 
 func (c *Client) Rename(ctx context.Context, current string, next string) error {

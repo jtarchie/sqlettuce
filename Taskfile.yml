@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 tasks:
   format: gofmt -w .
@@ -7,8 +7,8 @@ tasks:
   bench: go test -bench . -run ^$ -benchmem
   default:
     cmds:
-    - task: format
-    - task: lint
-    - go build sqlettus/main.go
-    - task: bench
-    - task: test
+      - task: format
+      - task: lint
+      - go build sqlettuce/main.go
+      - task: bench
+      - task: test

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jtarchie/sqlettus/executers"
+	"github.com/jtarchie/sqlettuce/executers"
 )
 
 func (c *Client) SetPop(ctx context.Context, name string, count int64) ([]string, error) {

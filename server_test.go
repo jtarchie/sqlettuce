@@ -1,4 +1,4 @@
-package sqlettus_test
+package sqlettuce_test
 
 import (
 	"context"
@@ -8,9 +8,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/jtarchie/sqlettus"
-	"github.com/jtarchie/sqlettus/executers"
-	"github.com/jtarchie/sqlettus/sdk"
+	"github.com/jtarchie/sqlettuce"
+	"github.com/jtarchie/sqlettuce/executers"
+	"github.com/jtarchie/sqlettuce/sdk"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -34,7 +34,7 @@ func TestCompatibility(t *testing.T) {
 	}
 
 	client := sdk.NewClient(db)
-	server := sqlettus.NewServer(":6464", client)
+	server := sqlettuce.NewServer(":6464", client)
 
 	server.Start()
 	defer server.Close()
@@ -106,7 +106,7 @@ func XBenchmarkCompatibility(b *testing.B) {
 	}
 
 	client := sdk.NewClient(db)
-	server := sqlettus.NewServer(":6464", client)
+	server := sqlettuce.NewServer(":6464", client)
 
 	server.Start()
 	defer server.Close()

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/jtarchie/sqlettus/sdk"
+	"github.com/jtarchie/sqlettuce/sdk"
 	"github.com/tidwall/redcon"
 )
 

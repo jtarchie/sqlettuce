@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"strconv"
 
-	"github.com/jtarchie/sqlettus/sdk"
+	"github.com/jtarchie/sqlettuce/sdk"
 	"github.com/tidwall/redcon"
 )
 

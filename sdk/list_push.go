@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/georgysavva/scany/v2/sqlscan"
-	"github.com/jtarchie/sqlettus/executers"
+	"github.com/jtarchie/sqlettuce/executers"
 )
 
 func (c *Client) ListPush(ctx context.Context, name string, values ...string) (int64, error) {

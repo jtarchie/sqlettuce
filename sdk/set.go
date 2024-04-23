@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jtarchie/sqlettus/executers"
+	"github.com/jtarchie/sqlettuce/executers"
 )
 
 func (c *Client) Set(ctx context.Context, name string, value any, ttl time.Duration) error {

@@ -7,7 +7,7 @@ import (
 	"math"
 
 	"github.com/georgysavva/scany/v2/sqlscan"
-	"github.com/jtarchie/sqlettus/executers"
+	"github.com/jtarchie/sqlettuce/executers"
 )
 
 func (c *Client) ListRemove(ctx context.Context, name string, count int64, element string) (int64, error) {

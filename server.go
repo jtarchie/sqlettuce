@@ -1,12 +1,12 @@
-package sqlettus
+package sqlettuce
 
 import (
 	"fmt"
 	"log/slog"
 	"sync"
 
-	"github.com/jtarchie/sqlettus/commands"
-	"github.com/jtarchie/sqlettus/sdk"
+	"github.com/jtarchie/sqlettuce/commands"
+	"github.com/jtarchie/sqlettuce/sdk"
 	"github.com/tidwall/redcon"
 )
 

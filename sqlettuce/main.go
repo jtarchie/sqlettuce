@@ -9,9 +9,9 @@ import (
 	"syscall"
 
 	"github.com/alecthomas/kong"
-	"github.com/jtarchie/sqlettus"
-	"github.com/jtarchie/sqlettus/executers"
-	"github.com/jtarchie/sqlettus/sdk"
+	"github.com/jtarchie/sqlettuce"
+	"github.com/jtarchie/sqlettuce/executers"
+	"github.com/jtarchie/sqlettuce/sdk"
 )
 
 type cli struct {
@@ -29,7 +29,7 @@ func (c *cli) Run() error {
 	}
 
 	client := sdk.NewClient(db)
-	server := sqlettus.NewServer(
+	server := sqlettuce.NewServer(
 		c.Addr,
 		client,
 	)

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jtarchie/sqlettus/executers"
+	"github.com/jtarchie/sqlettuce/executers"
 )
 
 func (c *Client) GetSet(ctx context.Context, name string, value string) (string, error) {
