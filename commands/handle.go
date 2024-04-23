@@ -99,6 +99,8 @@ func Handle(
 		srem(client, args, conn)
 	case "smove":
 		smove(client, args, conn)
+	case "spop":
+		spop(client, args, conn)
 	case "sunion":
 		sunion(client, args, conn)
 	case "sunionstore":

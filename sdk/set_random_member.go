@@ -20,6 +20,8 @@ func (c *Client) SetRandomMember(ctx context.Context, name string, length int64)
 			WHERE
 				keys.name = :name AND
 				keys.type = :type
+			ORDER BY
+				RANDOM()
 			LIMIT :limit
 			`,
 		sql.Named("name", name),
