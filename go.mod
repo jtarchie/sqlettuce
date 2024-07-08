@@ -8,7 +8,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/mhmtszr/concurrent-swiss-map v1.0.8
-	github.com/redis/go-redis/v9 v9.5.1
+	github.com/redis/go-redis/v9 v9.5.3
 	github.com/tidwall/redcon v1.6.2
 )
 
