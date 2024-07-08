@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	_ "embed"
 	"fmt"
+	"runtime"
 
 	csmap "github.com/mhmtszr/concurrent-swiss-map"
 )
@@ -37,8 +38,8 @@ func FromDB(filename string) (*PreparedExecuter, error) {
 		return nil, fmt.Errorf("could not create schema: %w", err)
 	}
 
-	db.SetMaxOpenConns(1)
-	db.SetMaxIdleConns(1)
+	db.SetMaxOpenConns(runtime.NumCPU())
+	db.SetMaxIdleConns(runtime.NumCPU())
 	db.SetConnMaxLifetime(0)
 	db.SetConnMaxIdleTime(0)
 
