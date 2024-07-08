@@ -28,7 +28,7 @@ type Compatibility []struct {
 func TestCompatibility(t *testing.T) {
 	var payload Compatibility
 
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		t.Fatalf("could not start db: %s", err)
 	}
@@ -100,7 +100,7 @@ func TestCompatibility(t *testing.T) {
 func XBenchmarkCompatibility(b *testing.B) {
 	var payload Compatibility
 
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}

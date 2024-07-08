@@ -1,4 +1,4 @@
-//nolint: sqlclosecheck, wrapcheck
+// nolint: sqlclosecheck, wrapcheck
 package executers
 
 import (

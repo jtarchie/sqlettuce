@@ -10,7 +10,7 @@ import (
 )
 
 func BenchmarkAddInt(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -28,7 +28,7 @@ func BenchmarkAddInt(b *testing.B) {
 }
 
 func BenchmarkDBSize(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -45,7 +45,7 @@ func BenchmarkDBSize(b *testing.B) {
 }
 
 func BenchmarkDelete(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -62,7 +62,7 @@ func BenchmarkDelete(b *testing.B) {
 }
 
 func BenchmarkExists(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -80,7 +80,7 @@ func BenchmarkExists(b *testing.B) {
 }
 
 func BenchmarkExpire(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -98,7 +98,7 @@ func BenchmarkExpire(b *testing.B) {
 }
 
 func BenchmarkFlushDB(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -115,7 +115,7 @@ func BenchmarkFlushDB(b *testing.B) {
 }
 
 func BenchmarkGet(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -133,7 +133,7 @@ func BenchmarkGet(b *testing.B) {
 }
 
 func BenchmarkKeys(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -151,7 +151,7 @@ func BenchmarkKeys(b *testing.B) {
 }
 
 func BenchmarkMSet(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -168,7 +168,7 @@ func BenchmarkMSet(b *testing.B) {
 }
 
 func BenchmarkListAt(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -186,7 +186,7 @@ func BenchmarkListAt(b *testing.B) {
 }
 
 func BenchmarkListLength(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -204,7 +204,7 @@ func BenchmarkListLength(b *testing.B) {
 }
 
 func BenchmarkListPush(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -221,7 +221,7 @@ func BenchmarkListPush(b *testing.B) {
 }
 
 func BenchmarkListRange(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -239,7 +239,7 @@ func BenchmarkListRange(b *testing.B) {
 }
 
 func BenchmarkListRemove(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -257,7 +257,7 @@ func BenchmarkListRemove(b *testing.B) {
 }
 
 func BenchmarkListShift(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -275,7 +275,7 @@ func BenchmarkListShift(b *testing.B) {
 }
 
 func BenchmarkListSort(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -293,7 +293,7 @@ func BenchmarkListSort(b *testing.B) {
 }
 
 func BenchmarkListUnshift(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -311,7 +311,7 @@ func BenchmarkListUnshift(b *testing.B) {
 }
 
 func BenchmarkRandomKey(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -329,7 +329,7 @@ func BenchmarkRandomKey(b *testing.B) {
 }
 
 func BenchmarkRename(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -347,7 +347,7 @@ func BenchmarkRename(b *testing.B) {
 }
 
 func BenchmarkSetAdd(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -364,7 +364,7 @@ func BenchmarkSetAdd(b *testing.B) {
 }
 
 func BenchmarkSetContains(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -382,7 +382,7 @@ func BenchmarkSetContains(b *testing.B) {
 }
 
 func BenchmarkSetDiff(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -401,7 +401,7 @@ func BenchmarkSetDiff(b *testing.B) {
 }
 
 func BenchmarkSetDiffAndStore(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -420,7 +420,7 @@ func BenchmarkSetDiffAndStore(b *testing.B) {
 }
 
 func BenchmarkIntersectDiff(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -439,7 +439,7 @@ func BenchmarkIntersectDiff(b *testing.B) {
 }
 
 func BenchmarkSetIntersectAndStore(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -458,7 +458,7 @@ func BenchmarkSetIntersectAndStore(b *testing.B) {
 }
 
 func BenchmarkSetLength(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -476,7 +476,7 @@ func BenchmarkSetLength(b *testing.B) {
 }
 
 func BenchmarkSetMembers(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -494,7 +494,7 @@ func BenchmarkSetMembers(b *testing.B) {
 }
 
 func BenchmarkSetMove(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -513,7 +513,7 @@ func BenchmarkSetMove(b *testing.B) {
 }
 
 func BenchmarkSetPop(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -531,7 +531,7 @@ func BenchmarkSetPop(b *testing.B) {
 }
 
 func BenchmarkRandomMember(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -549,7 +549,7 @@ func BenchmarkRandomMember(b *testing.B) {
 }
 
 func BenchmarkSetRemove(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -567,7 +567,7 @@ func BenchmarkSetRemove(b *testing.B) {
 }
 
 func BenchmarkSetUnion(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -586,7 +586,7 @@ func BenchmarkSetUnion(b *testing.B) {
 }
 
 func BenchmarkSetUnionAndStore(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -605,7 +605,7 @@ func BenchmarkSetUnionAndStore(b *testing.B) {
 }
 
 func BenchmarkSet(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -622,7 +622,7 @@ func BenchmarkSet(b *testing.B) {
 }
 
 func BenchmarkSubstr(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -640,7 +640,7 @@ func BenchmarkSubstr(b *testing.B) {
 }
 
 func BenchmarkTTL(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}
@@ -658,7 +658,7 @@ func BenchmarkTTL(b *testing.B) {
 }
 
 func BenchmarkType(b *testing.B) {
-	db, err := executers.FromDB(":memory:")
+	db, err := executers.FromDB("file:/data.db?vfs=memdb")
 	if err != nil {
 		b.Fatalf("could not start db: %s", err)
 	}

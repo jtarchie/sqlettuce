@@ -1,4 +1,4 @@
-//nolint: sqlclosecheck, wrapcheck
+// nolint: sqlclosecheck, wrapcheck
 package executers
 
 import (
@@ -27,7 +27,7 @@ func NewPrepared(db *sql.DB) *PreparedExecuter {
 
 func FromDB(filename string) (*PreparedExecuter, error) {
 	// set config based on: https://github.com/mattn/go-sqlite3/issues/1179#issuecomment-1638083995
-	db, err := sql.Open("sqlite3", filename+"?_tx=immediate")
+	db, err := sql.Open("sqlite3", filename)
 	if err != nil {
 		return nil, fmt.Errorf("could open sqlite3: %w", err)
 	}

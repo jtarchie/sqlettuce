@@ -15,8 +15,8 @@ import (
 )
 
 type cli struct {
-	Path string `default:":memory:"       help:"path to database file" require:"" short:"p"`
-	Addr string `default:"localhost:6379" help:"server address"        short:"a"`
+	Path string `default:"file:/data.db?vfs=memdb" help:"path to database file" require:"" short:"p"`
+	Addr string `default:"localhost:6379"          help:"server address"        short:"a"`
 }
 
 func (c *cli) Run() error {
