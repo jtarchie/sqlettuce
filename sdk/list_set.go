@@ -11,7 +11,7 @@ func (c *Client) ListSet(ctx context.Context, name string, index int64, element 
 		UPDATE
 			keys
 		SET
-		payload = json_replace(payload, '$[' || :index || ']', :element)
+		payload = jsonb_replace(payload, '$[' || :index || ']', :element)
 		WHERE
 			name = :name AND
 			type = :type

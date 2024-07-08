@@ -10,5 +10,6 @@ tasks:
       - task: format
       - task: lint
       - go build sqlettuce/main.go
-      - task: bench
       - task: test
+      - task: bench
+      

@@ -54,7 +54,7 @@ func (c *Client) ListRemove(ctx context.Context, name string, count int64, eleme
 			UPDATE
 				keys
 			SET
-				payload = json_remove(payload, '$[' || :position || ']')
+				payload = jsonb_remove(payload, '$[' || :position || ']')
 			WHERE
 				keys.name = :name AND
 				keys.type = :type
